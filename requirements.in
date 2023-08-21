@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+httpx
+
+aio_pika
+
+pydantic
+
+boto3
+
+pytest

@@ -88,6 +88,8 @@ typing-extensions==4.7.1
     #   fastapi
     #   pydantic
     #   pydantic-core
+ujson==5.8.0
+    # via -r requirements.in
 urllib3==1.26.16
     # via botocore
 uvicorn[standard]==0.23.2

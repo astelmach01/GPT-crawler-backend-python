@@ -14,6 +14,7 @@ anyio==3.7.1
     # via
     #   httpcore
     #   starlette
+    #   watchfiles
 boto3==1.28.30
     # via -r requirements.in
 botocore==1.31.30
@@ -34,6 +35,8 @@ h11==0.14.0
     #   uvicorn
 httpcore==0.17.3
     # via httpx
+httptools==0.6.0
+    # via uvicorn
 httpx==0.24.1
     # via -r requirements.in
 idna==3.4
@@ -65,6 +68,10 @@ pytest==7.4.0
     # via -r requirements.in
 python-dateutil==2.8.2
     # via botocore
+python-dotenv==1.0.0
+    # via uvicorn
+pyyaml==6.0.1
+    # via uvicorn
 s3transfer==0.6.2
     # via boto3
 six==1.16.0
@@ -83,8 +90,14 @@ typing-extensions==4.7.1
     #   pydantic-core
 urllib3==1.26.16
     # via botocore
-uvicorn==0.23.2
+uvicorn[standard]==0.23.2
     # via -r requirements.in
+uvloop==0.17.0
+    # via uvicorn
+watchfiles==0.19.0
+    # via uvicorn
+websockets==11.0.3
+    # via uvicorn
 yarl==1.9.2
     # via
     #   aio-pika

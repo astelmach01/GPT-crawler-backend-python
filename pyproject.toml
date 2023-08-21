@@ -1,0 +1,14 @@
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.black.excludes]
+paths = [
+    ".venv",
+    ".git",
+    "build",
+]
+
+[build-system]
+requires = ["black"]
+build-backend = "setuptools.build_meta"

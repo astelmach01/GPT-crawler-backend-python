@@ -2,7 +2,7 @@ import enum
 from pathlib import Path
 from tempfile import gettempdir
 
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from yarl import URL
 
 TEMP_DIR = Path(gettempdir())
@@ -65,9 +65,7 @@ class Settings(BaseSettings):
             path=self.rabbit_vhost,
         )
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
 
 settings = Settings()

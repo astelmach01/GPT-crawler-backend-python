@@ -62,14 +62,19 @@ pydantic==2.2.1
     # via
     #   -r requirements.in
     #   fastapi
+    #   pydantic-settings
 pydantic-core==2.6.1
     # via pydantic
+pydantic-settings==2.0.3
+    # via -r requirements.in
 pytest==7.4.0
     # via -r requirements.in
 python-dateutil==2.8.2
     # via botocore
 python-dotenv==1.0.0
-    # via uvicorn
+    # via
+    #   pydantic-settings
+    #   uvicorn
 pyyaml==6.0.1
     # via uvicorn
 s3transfer==0.6.2

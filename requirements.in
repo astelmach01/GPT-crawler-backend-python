@@ -5,6 +5,7 @@ httpx
 aio_pika
 
 pydantic
+pydantic-settings
 ujson
 
 boto3

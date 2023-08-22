@@ -3,6 +3,7 @@ from pathlib import Path
 from tempfile import gettempdir
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from yarl import URL
 
 TEMP_DIR = Path(gettempdir())
 
@@ -38,6 +39,32 @@ class Settings(BaseSettings):
 
     # Current environment
     environment: str = "dev"
+
+    # Variables for RabbitMQ
+    rabbit_host: str = "app-rmq"
+    rabbit_port: int = 5672
+    rabbit_user: str = "guest"
+    rabbit_pass: str = "guest"
+    rabbit_vhost: str = "/"
+
+    rabbit_pool_size: int = 2
+    rabbit_channel_pool_size: int = 10
+
+    @property
+    def rabbit_url(self) -> URL:
+        """
+        Assemble RabbitMQ URL from settings.
+
+        :return: rabbit URL.
+        """
+        return URL.build(
+            scheme="amqp",
+            host=self.rabbit_host,
+            port=self.rabbit_port,
+            user=self.rabbit_user,
+            password=self.rabbit_pass,
+            path=self.rabbit_vhost,
+        )
 
     log_level: LogLevel = LogLevel.INFO
 

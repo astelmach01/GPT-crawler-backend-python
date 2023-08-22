@@ -1,10 +1,13 @@
 from pathlib import Path
 
-from app.web.api.router import api_router
-from app.web.lifetime import register_shutdown_event, register_startup_event
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.cors import CORSMiddleware
+
+from app.settings import settings
+from app.web.api.router import api_router
+from app.web.lifetime import register_shutdown_event, register_startup_event
 
 APP_ROOT = Path(__file__).parent.parent
 
@@ -23,6 +26,15 @@ def get_app() -> FastAPI:
         redoc_url="/api/redoc",
         openapi_url="/api/openapi.json",
         default_response_class=UJSONResponse,
+    )
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[settings.frontend_url],
+        allow_origin_regex=settings.allowed_origins_regex,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     # Adds startup and shutdown events.

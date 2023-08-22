@@ -26,7 +26,8 @@ class Settings(BaseSettings):
     with environment variables.
     """
 
-    OPENAI_SECRET_KEY: str
+    OPENAI_API_KEY: str
+    OPENAI_ORGANIZATION: str
 
     host: str = "127.0.0.1"
     port: int = 8000

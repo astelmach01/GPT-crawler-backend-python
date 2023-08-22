@@ -6,7 +6,7 @@ REQUIREMENTS_IN = requirements.in
 # The generated requirements.txt file
 REQUIREMENTS_TXT = requirements.txt
 
-.PHONY: compile install commit
+.PHONY: compile install push
 
 compile: $(REQUIREMENTS_TXT)
 
@@ -16,7 +16,7 @@ install: compile
 $(REQUIREMENTS_TXT): $(REQUIREMENTS_IN)
 	pip-compile $(REQUIREMENTS_IN) -o $(REQUIREMENTS_TXT)
 
-commit:
+push:
 	@if [ -z "$(message)" ]; then \
 		echo "Please specify a commit message: make commit message='Your message here'"; \
 		exit 1; \

@@ -3,6 +3,7 @@ uvicorn[standard]
 httpx
 
 langchain
+openai
 
 pydantic
 pydantic-settings

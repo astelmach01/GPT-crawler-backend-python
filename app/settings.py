@@ -30,6 +30,10 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str
     OPENAI_ORGANIZATION: str
 
+    # Frontend URL
+    frontend_url: str = "http://localhost:3000"
+    allowed_origins_regex: str | None = None
+
     host: str = "127.0.0.1"
     port: int = 8000
     # quantity of workers for uvicorn

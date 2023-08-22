@@ -2,10 +2,11 @@ fastapi
 uvicorn[standard]
 httpx
 
-aio_pika
+langchain
 
 pydantic
 pydantic-settings
+python-dotenv
 ujson
 
 boto3

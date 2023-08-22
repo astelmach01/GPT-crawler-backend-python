@@ -1,0 +1,25 @@
+{
+  "name": "Python with FastAPI",
+  "dockerFile": "Dockerfile",
+
+  // Set the base image for your container
+  "settings": {
+    "python.pythonPath": "/usr/local/bin/python",
+    "python.venvPath": "/workspace/.venv"
+  },
+
+  // Add the required extensions for Python development (optional)
+  "extensions": ["ms-python.python"],
+
+  // Forward ports for FastAPI development
+  "forwardPorts": [8000],
+
+  // Add post-create and post-startup commands (optional)
+  "postCreateCommand": "python -m venv .venv",
+  "postStartCommand": "uvicorn app.web.application:get_app --host 0.0.0.0 --port $PORT --factory",
+
+  // Add environment variables (optional)
+  "containerEnv": {
+    "FASTAPI_APP": "app.web.application:get_app"
+  }
+}

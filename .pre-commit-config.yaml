@@ -6,6 +6,7 @@ repos:
         -   id: end-of-file-fixer
         -   id: check-yaml
         -   id: check-added-large-files
+
   -   repo: https://github.com/psf/black
       rev: 23.7.0
       hooks:
@@ -15,4 +16,13 @@ repos:
   -   repo: https://github.com/PyCQA/isort
       rev: 5.12.0
       hooks:
-        - id: isort
+        -   id: isort
+
+  -   repo: https://github.com/pre-commit/mirrors-mypy
+      rev: v0.910
+      hooks:
+        -   id: mypy
+            name: Validate types with MyPy
+            entry: mypy
+            language: python
+            types: [python]

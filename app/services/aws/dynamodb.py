@@ -2,7 +2,8 @@ import logging
 from typing import Any
 
 import boto3
-from settings import settings
+
+from app.settings import settings
 
 REGION = "us-west-2"
 SUCCESS = 200

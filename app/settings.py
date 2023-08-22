@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     with environment variables.
     """
 
+    OPENAI_API_KEY: str
+    OPENAI_ORGANIZATION: str
+
     host: str = "127.0.0.1"
     port: int = 8000
     # quantity of workers for uvicorn
@@ -36,8 +39,6 @@ class Settings(BaseSettings):
 
     # Current environment
     environment: str = "dev"
-
-    log_level: LogLevel = LogLevel.INFO
 
     # Variables for RabbitMQ
     rabbit_host: str = "app-rmq"
@@ -64,6 +65,8 @@ class Settings(BaseSettings):
             password=self.rabbit_pass,
             path=self.rabbit_vhost,
         )
+
+    log_level: LogLevel = LogLevel.INFO
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

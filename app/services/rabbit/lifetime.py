@@ -1,8 +1,9 @@
 import aio_pika
 from aio_pika.abc import AbstractChannel, AbstractRobustConnection
 from aio_pika.pool import Pool
-from app.settings import settings
 from fastapi import FastAPI
+
+from app.settings import settings
 
 
 def init_rabbit(app: FastAPI) -> None:  # pragma: no cover

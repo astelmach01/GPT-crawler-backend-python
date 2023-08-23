@@ -6,8 +6,6 @@ extend-ignore = E203
 docstring_style=sphinx
 
 ignore =
-  ; Found local folder import
-  WPS300,
   ; Found `f` string
   WPS305,
   ; Missing docstring in public module
@@ -90,15 +88,6 @@ per-file-ignores =
   DAR101,
   ; Found too many arguments
   WPS211,
-
-  ; all init files
-  __init__.py:
-  ; ignore not used imports
-  F401,
-  ; ignore import with wildcard
-  F403,
-  ; Found wrong metadata variable
-  WPS410,
 
 exclude =
   ./.cache,

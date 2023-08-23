@@ -25,6 +25,8 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
+black==23.7.0
+    # via -r requirements.in
 boto3==1.28.30
     # via -r requirements.in
 boto3-stubs[dynamodb,s3,secretsmanager]==1.28.31
@@ -45,7 +47,9 @@ charset-normalizer==3.2.0
     #   aiohttp
     #   requests
 click==8.1.7
-    # via uvicorn
+    # via
+    #   black
+    #   uvicorn
 dataclasses-json==0.5.14
     # via langchain
 fastapi==0.101.1
@@ -72,6 +76,8 @@ idna==3.4
     #   yarl
 iniconfig==2.0.0
     # via pytest
+isort==5.12.0
+    # via -r requirements.in
 jmespath==1.0.1
     # via
     #   boto3
@@ -86,6 +92,8 @@ multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
+mypy==1.5.1
+    # via -r requirements.in
 mypy-boto3-dynamodb==1.28.27
     # via boto3-stubs
 mypy-boto3-s3==1.28.27
@@ -93,7 +101,10 @@ mypy-boto3-s3==1.28.27
 mypy-boto3-secretsmanager==1.28.24
     # via boto3-stubs
 mypy-extensions==1.0.0
-    # via typing-inspect
+    # via
+    #   black
+    #   mypy
+    #   typing-inspect
 numexpr==2.8.5
     # via langchain
 numpy==1.25.2
@@ -104,10 +115,15 @@ openai==0.27.8
     # via -r requirements.in
 packaging==23.1
     # via
+    #   black
     #   marshmallow
     #   pytest
 pamqp==3.2.1
     # via aiormq
+pathspec==0.11.2
+    # via black
+platformdirs==3.10.0
+    # via black
 pluggy==1.2.0
     # via pytest
 pydantic==2.2.1
@@ -163,6 +179,7 @@ types-s3transfer==0.6.2
 typing-extensions==4.7.1
     # via
     #   fastapi
+    #   mypy
     #   pydantic
     #   pydantic-core
     #   sqlalchemy

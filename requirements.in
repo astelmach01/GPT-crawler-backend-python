@@ -15,3 +15,6 @@ boto3
 boto3-stubs[secretsmanager,s3,dynamodb]
 
 pytest
+black
+isort
+mypy

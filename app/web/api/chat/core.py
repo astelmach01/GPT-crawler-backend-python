@@ -1,17 +1,26 @@
 import openai
 
-from app.settings import settings
-
-openai_api_key = settings.OPENAI_API_KEY
-openai.api_key = openai_api_key
+from .prompts import intro
 
 MODEL = "gpt-3.5-turbo"
+
+
+def _format_user_message(message: str) -> dict:
+    return {"role": "user", "content": message}
+
+
+def _format_assistant_message(message: str) -> dict:
+    return {"role": "assistant", "content": message}
+
+
+def _format_system_message(message: str) -> dict:
+    return {"role": "system", "content": message}
 
 
 def chatgpt_call(prompt, model=MODEL) -> str:
     response = openai.ChatCompletion.create(
         model=model,
-        messages=[{"role": "user", "content": prompt}],
+        messages=[_format_system_message(intro), _format_user_message(prompt)],
     )
 
     return response["choices"][0]["message"]["content"]

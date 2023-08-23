@@ -1,4 +1,5 @@
 # Makefile to manage Python dependencies using pip-compile and pip
+all: check
 
 # The input requirements.in file
 REQUIREMENTS_IN = requirements.in
@@ -6,7 +7,18 @@ REQUIREMENTS_IN = requirements.in
 # The generated requirements.txt file
 REQUIREMENTS_TXT = requirements.txt
 
-.PHONY: compile install push
+.PHONY: compile install push sort format type
+
+sort:
+	isort .
+
+format:
+	black .
+
+type:
+	mypy .
+
+check: sort format type
 
 compile: $(REQUIREMENTS_TXT)
 
@@ -16,7 +28,7 @@ install: compile
 $(REQUIREMENTS_TXT): $(REQUIREMENTS_IN)
 	pip-compile $(REQUIREMENTS_IN) -o $(REQUIREMENTS_TXT)
 
-push:
+push: check
 	@if [ -z "$(message)" ]; then \
 		echo "Please specify a commit message: make commit message='Your message here'"; \
 		exit 1; \

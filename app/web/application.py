@@ -5,6 +5,7 @@ from fastapi.responses import UJSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
+from app.configure_logging import configure_logging
 from app.settings import settings
 from app.web.api.router import api_router
 from app.web.lifetime import register_shutdown_event, register_startup_event
@@ -20,6 +21,8 @@ def get_app() -> FastAPI:
 
     :return: application.
     """
+    configure_logging()
+
     app = FastAPI(
         title="app",
         docs_url="/api/docs",

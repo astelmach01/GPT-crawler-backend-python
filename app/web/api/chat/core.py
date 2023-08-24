@@ -20,6 +20,17 @@ def _format_system_message(message: str) -> dict:
     return {"role": "system", "content": message}
 
 
+def _handle_function_call(response: dict) -> str:
+    response_message = response["message"]
+
+    function_name = response_message["function_call"]["name"]
+    function_to_call = function_names[function_name]
+    function_args = json.loads(response_message["function_call"]["arguments"])
+
+    function_response = function_to_call(**function_args)
+    return function_response
+
+
 def chatgpt_response(prompt, model=MODEL) -> str:
     response = openai.ChatCompletion.create(
         model=model,
@@ -41,15 +52,7 @@ def chatgpt_function_response(
         functions=functions,
     )["choices"][0]
 
-    response_message = response["message"]
-
     if response["finish_reason"] == "function_call":
-        function_name = response_message["function_call"]["name"]
-        function_to_call = function_names[function_name]
-        function_args = json.loads(
-            response_message["function_call"]["arguments"], strict=False
-        )
-        function_response = function_to_call(**function_args)
-        return function_response
+        return _handle_function_call(response)
 
-    return response_message["content"]
+    return response["message"]["content"]

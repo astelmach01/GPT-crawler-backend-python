@@ -30,6 +30,10 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str
     OPENAI_ORGANIZATION: str
 
+    # AWS
+    AWS_ACCESS_KEY_ID: str | None = None
+    AWS_SECRET_ACCESS_KEY: str | None = None
+
     # Frontend URL
     frontend_url: str = "http://localhost:3000"
     allowed_origins_regex: str | None = None

@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.schemas.chat import ChatBase, ChatResponse
 
-from .core import chatgpt_call
+from .core import chatgpt_function_response
 
 router = APIRouter()
 
@@ -16,5 +16,5 @@ async def chat(chat_request: ChatBase) -> ChatResponse:
     :return: chat response.
     """
 
-    response = chatgpt_call(chat_request.prompt)
+    response = chatgpt_function_response(chat_request.prompt)
     return ChatResponse(response=response)

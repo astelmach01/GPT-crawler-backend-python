@@ -1,7 +1,8 @@
 import logging
-from typing import Any
+from typing import Any, Mapping
 
 import boto3
+from mypy_boto3_dynamodb.type_defs import AttributeValueUpdateTypeDef
 
 from app.settings import settings
 
@@ -37,7 +38,9 @@ def make_key(table_name: str, key: str) -> dict[str, dict[str, str]]:
     return {"id": {"S": key}}
 
 
-def put_item(table_name: str, table_key: str, **kwargs: dict[str, Any]) -> bool:
+def put_item(
+    table_name: str, table_key: str, **kwargs: Mapping[str, AttributeValueUpdateTypeDef]
+) -> bool:
     """
     Put an item into a table.
 
@@ -56,7 +59,7 @@ def put_item(table_name: str, table_key: str, **kwargs: dict[str, Any]) -> bool:
     response = client.update_item(
         TableName=table_name,
         Key=make_key(table_name, table_key),
-        AttributeUpdates=item,
+        AttributeUpdates=item,  # type: ignore
     )
     return response["ResponseMetadata"]["HTTPStatusCode"] == SUCCESS
 
@@ -75,7 +78,10 @@ def get_attribute(table_name: str, key: str, attribute: str) -> str | None:
     response = client.get_item(TableName=table_name, Key=make_key(table_name, key))
     item = response.get("Item")
 
-    return item.get(attribute)["S"] if item else None
+    if not item or not (value := item.get(attribute)):
+        return None
+
+    return value["S"]
 
 
 def delete_item(table_name: str, key: str) -> bool:

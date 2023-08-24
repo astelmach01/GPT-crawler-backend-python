@@ -86,6 +86,8 @@ langchain==0.0.270
     # via -r requirements.in
 langsmith==0.0.25
     # via langchain
+loguru==0.7.0
+    # via -r requirements.in
 marshmallow==3.20.1
     # via dataclasses-json
 multidict==6.0.4

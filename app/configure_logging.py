@@ -41,7 +41,7 @@ class InterceptHandler(logging.Handler):
         )
 
 
-def configure_logging() -> None:  # pragma: no cover
+def configure_logging() -> None:
     """Configures logging."""
     intercept_handler = InterceptHandler()
 
@@ -55,9 +55,14 @@ def configure_logging() -> None:  # pragma: no cover
     logging.getLogger("uvicorn").handlers = [intercept_handler]
     logging.getLogger("uvicorn.access").handlers = [intercept_handler]
 
-    # set logs output, level and format
+    # set logs output, level, and format
     logger.remove()
+    logger_format = (
+        "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: "
+        "<5}</level>|-<level>{message}</level>"
+    )
     logger.add(
         sys.stdout,
         level=settings.log_level,
+        format=logger_format,  # Specify the custom format here
     )

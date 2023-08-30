@@ -9,6 +9,12 @@ jobs:
   CI:
 
     runs-on: ubuntu-latest
+    env: # Setting environment variables from GitHub Secrets
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_ORGANIZATION: ${{ secrets.OPENAI_ORGANIZATION }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python

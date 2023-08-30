@@ -1,9 +1,7 @@
 import logging
-from datetime import datetime
 from typing import List, Mapping
 
 import boto3
-from boto3.dynamodb.conditions import Key
 from mypy_boto3_dynamodb.type_defs import AttributeValueUpdateTypeDef
 
 from app.schemas.task import Task

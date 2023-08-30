@@ -1,8 +1,8 @@
 import logging
 
 from fastapi import APIRouter
-from schemas.response import TaskResponse
 
+from app.schemas.response import TaskResponse
 from app.schemas.task import Task
 from app.services.aws.dynamodb import append_task, get_user_tasks
 

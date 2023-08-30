@@ -1,41 +1,25 @@
 import logging
-from typing import Any, Mapping
+from datetime import datetime
+from typing import List, Mapping
 
 import boto3
+from boto3.dynamodb.conditions import Key
 from mypy_boto3_dynamodb.type_defs import AttributeValueUpdateTypeDef
 
+from app.schemas.task import Task
 from app.settings import settings
 
-REGION = "us-west-2"
+REGION = "us-east-2"
 SUCCESS = 200
 
 client = boto3.client(
     "dynamodb",
-    aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+    aws_access_key_id=settings.AWS_ACCESS_KEY,
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-    region_name="us-east-2",
+    region_name=REGION,
 )
 
-USER_ACCESS_KEYS = "user-access-keys"
-CHANNEL_ID_TO_PHONE_NUMBER = "channel_id-to-phone_number"
-
-
-def make_key(table_name: str, key: str) -> dict[str, dict[str, str]]:
-    """
-    Return a formatted key for a given table name and key.
-
-    :param table_name: name of the table.
-    :param key: key of the item.
-
-    :return: formatted key.
-    """
-    if table_name == USER_ACCESS_KEYS:
-        return {"phone-number": {"S": key}}
-
-    elif table_name == CHANNEL_ID_TO_PHONE_NUMBER:
-        return {"channel_id": {"S": key}}
-
-    return {"id": {"S": key}}
+COSMO_USERS = "cosmo_users"
 
 
 def put_item(
@@ -58,7 +42,7 @@ def put_item(
     logging.info(f"Putting item {item} with key {table_key}")
     response = client.update_item(
         TableName=table_name,
-        Key=make_key(table_name, table_key),
+        Key={"user": {"S": table_key}},
         AttributeUpdates=item,  # type: ignore
     )
     return response["ResponseMetadata"]["HTTPStatusCode"] == SUCCESS
@@ -75,7 +59,7 @@ def get_attribute(table_name: str, key: str, attribute: str) -> str | None:
     :return: attribute value if the item exists, None otherwise.
     """
     logging.info(f"Getting attribute '{attribute}' for key '{key}'")
-    response = client.get_item(TableName=table_name, Key=make_key(table_name, key))
+    response = client.get_item(TableName=table_name, Key={"user": {"S": key}})
     item = response.get("Item")
 
     if not item or not (value := item.get(attribute)):
@@ -93,5 +77,39 @@ def delete_item(table_name: str, key: str) -> bool:
     :return: True if the item was deleted, False otherwise.
     """
     logging.info(f"Deleting item {key}")
-    response = client.delete_item(TableName=table_name, Key=make_key(table_name, key))
+    response = client.delete_item(TableName=table_name, Key={"user": {"S": key}})
     return response["ResponseMetadata"]["HTTPStatusCode"] == SUCCESS
+
+
+def append_task(user: str, task: str, date: str) -> bool:
+    new_task = {"M": {"task": {"S": task}, "date": {"S": date}}}
+
+    response = client.update_item(
+        TableName=TASKS_TABLE,
+        Key={"user": {"S": user}},
+        UpdateExpression="SET tasks = list_append("
+        "if_not_exists(tasks, :empty_list), "
+        ":t)",
+        ExpressionAttributeValues={":t": {"L": [new_task]}, ":empty_list": {"L": []}},
+    )
+
+    return response["ResponseMetadata"]["HTTPStatusCode"] == SUCCESS
+
+
+TASKS_TABLE = "cosmo_users"
+
+
+def get_user_tasks(user: str) -> List[Task]:
+    response = client.get_item(TableName=TASKS_TABLE, Key={"user": {"S": user}})
+    item = response.get("Item")
+
+    if not item or not (tasks := item.get("tasks")):
+        return []
+
+    return [
+        Task(
+            task=task["M"]["task"]["S"],
+            date=task["M"]["date"]["S"],
+        )
+        for task in tasks["L"]
+    ]

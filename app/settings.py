@@ -31,11 +31,13 @@ class Settings(BaseSettings):
     OPENAI_ORGANIZATION: str
 
     # AWS
-    AWS_ACCESS_KEY_ID: str | None = None
-    AWS_SECRET_ACCESS_KEY: str | None = None
+    AWS_ACCESS_KEY: str
+    AWS_SECRET_ACCESS_KEY: str
 
     # Frontend URL
-    frontend_url: str = "http://localhost:3000"
+    frontend_url: str = (
+        "https://cosmo-frontend-j8mf-6xzuvvzwt-astelmach01-s-team.vercel.app/"
+    )
     allowed_origins_regex: str | None = None
 
     host: str = "127.0.0.1"

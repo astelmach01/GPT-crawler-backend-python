@@ -1,4 +1,4 @@
-from app.web.tasks.reminder import create_reminder
+from app.tasks.reminder import create_reminder
 
 function_names = {
     "create_reminder": create_reminder,
@@ -8,7 +8,8 @@ function_names = {
 function_descriptions = [
     {
         "name": "create_reminder",
-        "description": "creates a reminder for a task at a given datetime",
+        "description": "This function handles the logic for creating a reminder for a "
+        "generic task at a given date and time.",
         "parameters": {
             "type": "object",
             "properties": {

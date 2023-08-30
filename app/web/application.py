@@ -1,9 +1,10 @@
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import UJSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 
 from app.configure_logging import configure_logging
 from app.settings import settings
@@ -33,7 +34,7 @@ def get_app() -> FastAPI:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[settings.frontend_url],
+        allow_origins=[settings.frontend_url, "http://localhost:3000"],
         allow_origin_regex=settings.allowed_origins_regex,
         allow_credentials=True,
         allow_methods=["*"],

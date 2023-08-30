@@ -1,9 +1,9 @@
 from typing import List
 
 from fastapi import APIRouter
-from schemas.task import Task
 
 from app.schemas.chat import ChatBase, ChatResponse
+from app.schemas.task import Task
 from app.services.aws.dynamodb import append_task, get_user_tasks
 
 from .core import chatgpt_function_response

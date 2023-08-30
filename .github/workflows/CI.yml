@@ -9,10 +9,6 @@ jobs:
   CI:
 
     runs-on: ubuntu-latest
-    env:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      OPENAI_ORGANIZATION: ${{ secrets.OPENAI_ORGANIZATION }}
-
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python

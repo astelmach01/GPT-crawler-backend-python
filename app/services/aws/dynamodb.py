@@ -1,9 +1,11 @@
 import logging
-from typing import List, Mapping
+from typing import Mapping
 
 import boto3
+import botocore.exceptions
 from mypy_boto3_dynamodb.type_defs import AttributeValueUpdateTypeDef
 
+from app.schemas.response import TaskResponse
 from app.schemas.task import Task
 from app.settings import settings
 
@@ -97,17 +99,21 @@ def append_task(user: str, task: str, date: str) -> bool:
 TASKS_TABLE = "cosmo_users"
 
 
-def get_user_tasks(user: str) -> List[Task]:
-    response = client.get_item(TableName=TASKS_TABLE, Key={"user": {"S": user}})
-    item = response.get("Item")
+def get_user_tasks(user: str) -> TaskResponse:
+    try:
+        response = client.get_item(TableName=TASKS_TABLE, Key={"user": {"S": user}})
+        item = response.get("Item")
+    except botocore.exceptions.ClientError:
+        return TaskResponse(success=False)
 
     if not item or not (tasks := item.get("tasks")):
-        return []
+        return TaskResponse(success=True)
 
-    return [
+    tasks = [  # type: ignore
         Task(
             task=task["M"]["task"]["S"],
             date=task["M"]["date"]["S"],
         )
         for task in tasks["L"]
     ]
+    return TaskResponse(success=True, tasks=tasks)

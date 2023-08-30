@@ -1,4 +1,4 @@
-from app.tasks.reminder import create_reminder
+from app.web.api.tasks.core import create_reminder
 
 function_names = {
     "create_reminder": create_reminder,

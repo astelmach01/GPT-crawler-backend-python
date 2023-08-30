@@ -35,9 +35,7 @@ class Settings(BaseSettings):
     AWS_SECRET_ACCESS_KEY: str
 
     # Frontend URL
-    frontend_url: str = (
-        "https://cosmo-frontend-j8mf-6xzuvvzwt-astelmach01-s-team.vercel.app/"
-    )
+    frontend_url: str = "https://cosmo-mp7z316jo-astelmach01-s-team.vercel.app/"
     allowed_origins_regex: str | None = None
 
     host: str = "127.0.0.1"

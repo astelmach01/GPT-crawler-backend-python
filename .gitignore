@@ -5,6 +5,8 @@
 *.session
 *.session-journal
 
+.fleet
+
 local.py
 post.py
 

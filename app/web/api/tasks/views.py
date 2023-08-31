@@ -4,10 +4,10 @@ from functools import wraps
 from typing import Sequence
 
 from fastapi import APIRouter, HTTPException
-from services.aws.models import Task as TaskModel
 
 from app.schemas.response import TaskResponse
 from app.schemas.task import Task as TaskSchema
+from app.services.aws.models import Task as TaskModel
 from app.services.aws.rds import (
     create_task,
     delete_task,
@@ -62,12 +62,12 @@ async def get_user_tasks(user_id: str):
 @router.put("/update_task/{task_id}", response_model=TaskResponse)
 @task_response_decorator
 async def _update_task(task_id: str, description: str, date: datetime):
-    task: TaskModel = update_task(task_id, description, date)
+    task: TaskModel | None = update_task(task_id, description, date)
     return [task], f"Task with task_id: {task_id} not updated"
 
 
 @router.delete("/delete_task/{task_id}", response_model=TaskResponse)
 @task_response_decorator
 async def _delete_task(task_id: str):
-    task: TaskModel = delete_task(task_id)
+    task: TaskModel | None = delete_task(task_id)
     return [task], f"Task with task_id: {task_id} not deleted"

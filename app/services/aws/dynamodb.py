@@ -2,11 +2,8 @@ import logging
 from typing import Mapping
 
 import boto3
-import botocore.exceptions
 from mypy_boto3_dynamodb.type_defs import AttributeValueUpdateTypeDef
 
-from app.schemas.response import TaskResponse
-from app.schemas.task import Task
 from app.settings import settings
 
 REGION = "us-east-2"
@@ -18,8 +15,6 @@ client = boto3.client(
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
     region_name=REGION,
 )
-
-COSMO_USERS = "cosmo_users"
 
 
 def put_item(
@@ -79,41 +74,3 @@ def delete_item(table_name: str, key: str) -> bool:
     logging.info(f"Deleting item {key}")
     response = client.delete_item(TableName=table_name, Key={"user": {"S": key}})
     return response["ResponseMetadata"]["HTTPStatusCode"] == SUCCESS
-
-
-def append_task(user: str, task: str, date: str) -> bool:
-    new_task = {"M": {"task": {"S": task}, "date": {"S": date}}}
-
-    response = client.update_item(
-        TableName=TASKS_TABLE,
-        Key={"user": {"S": user}},
-        UpdateExpression="SET tasks = list_append("
-        "if_not_exists(tasks, :empty_list), "
-        ":t)",
-        ExpressionAttributeValues={":t": {"L": [new_task]}, ":empty_list": {"L": []}},
-    )
-
-    return response["ResponseMetadata"]["HTTPStatusCode"] == SUCCESS
-
-
-TASKS_TABLE = "cosmo_users"
-
-
-def get_user_tasks(user: str) -> TaskResponse:
-    try:
-        response = client.get_item(TableName=TASKS_TABLE, Key={"user": {"S": user}})
-        item = response.get("Item")
-    except botocore.exceptions.ClientError:
-        return TaskResponse(success=False)
-
-    if not item or not (tasks := item.get("tasks")):
-        return TaskResponse(success=True)
-
-    tasks = [  # type: ignore
-        Task(
-            task=task["M"]["task"]["S"],
-            date=task["M"]["date"]["S"],
-        )
-        for task in tasks["L"]
-    ]
-    return TaskResponse(success=True, tasks=tasks)

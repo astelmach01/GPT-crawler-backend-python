@@ -34,6 +34,19 @@ class Settings(BaseSettings):
     AWS_ACCESS_KEY: str
     AWS_SECRET_ACCESS_KEY: str
 
+    # DB
+    DB_USERNAME: str
+    DB_PASSWORD: str
+    DB_ENDPOINT: str
+    DB_PORT: int
+
+    # get url for aws rds mysql
+    def get_db_url(self, db_name) -> str:
+        return (
+            f"mysql+pymysql://{self.DB_USERNAME}:{self.DB_PASSWORD}"
+            f"@{self.DB_ENDPOINT}:{self.DB_PORT}/{db_name}"
+        )
+
     # Frontend URL
     frontend_url: str = "https://cosmo-mp7z316jo-astelmach01-s-team.vercel.app/"
     allowed_origins_regex: str | None = None

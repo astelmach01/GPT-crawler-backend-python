@@ -59,7 +59,7 @@ def configure_logging() -> None:
     logger.remove()
     logger_format = (
         "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: "
-        "<5}</level>|-<level>{message}</level>"
+        "<5}</level>| <level>{message}</level>"
     )
     logger.add(
         sys.stdout,

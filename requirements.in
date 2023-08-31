@@ -13,6 +13,10 @@ ujson
 
 boto3
 boto3-stubs[secretsmanager,s3,dynamodb]
+sqlalchemy[mypy]
+pymysql
+psycopg2-binary
+types-PyMySQL
 
 pytest
 black

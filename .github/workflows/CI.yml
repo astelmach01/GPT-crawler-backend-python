@@ -14,6 +14,10 @@ jobs:
       OPENAI_ORGANIZATION: ${{ secrets.OPENAI_ORGANIZATION }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_ENDPOINT: ${{ secrets.DB_ENDPOINT }}
+      DB_PORT: ${{ secrets.DB_PORT }}
 
     steps:
       - uses: actions/checkout@v3

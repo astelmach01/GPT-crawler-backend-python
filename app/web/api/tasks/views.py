@@ -1,9 +1,9 @@
 import logging
 from datetime import datetime
 from functools import wraps
-from typing import Sequence
+from typing import List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.schemas.response import TaskResponse
 from app.schemas.task import Task as TaskSchema
@@ -15,6 +15,8 @@ from app.services.aws.rds import (
     update_task,
 )
 
+from ..dependencies import get_db
+
 router = APIRouter()
 
 
@@ -22,7 +24,7 @@ def task_response_decorator(func):
     @wraps(func)
     async def wrapper(*args, **kwargs) -> TaskResponse:
         try:
-            task_result: Sequence[TaskModel | None]
+            task_result: List[TaskModel | None]
             task_result, log_msg = await func(*args, **kwargs)
 
             logging.info(f"Executed {func.__name__} with result: {task_result}")
@@ -35,7 +37,7 @@ def task_response_decorator(func):
                 for task in task_result
                 if task
             ]
-            return TaskResponse(success=True, tasks=tasks)
+            return TaskResponse(success=True, tasks=tasks, reason="Success")
 
         except Exception as e:
             raise HTTPException(status_code=400, detail=str(e))
@@ -45,29 +47,36 @@ def task_response_decorator(func):
 
 @router.post("/create_task/{user_id}", response_model=TaskResponse)
 @task_response_decorator
-async def create_new_task(user_id: str, description: str, date: datetime):
-    task: TaskModel = create_task(description, date, user_id)
+async def create_new_task(
+    description: str,
+    date: datetime,
+    user_id: int,
+    session=Depends(get_db),
+):
+    task: TaskModel = create_task(description, date, user_id, session)
     return [task], f"Task for user_id: {user_id} not created"
 
 
 @router.get("/get_user_tasks/{user_id}", response_model=TaskResponse)
 @task_response_decorator
-async def get_user_tasks(user_id: str):
-    tasks: Sequence[TaskModel | None] = read_tasks_by_user_id(user_id)
+async def get_user_tasks(user_id: int, session=Depends(get_db)):
+    tasks = read_tasks_by_user_id(user_id, session)
     if not tasks:
-        tasks = [None]
+        tasks = [None]  # type: ignore
     return tasks, f"No tasks found for user: {user_id}"
 
 
 @router.put("/update_task/{task_id}", response_model=TaskResponse)
 @task_response_decorator
-async def _update_task(task_id: str, description: str, date: datetime):
-    task: TaskModel | None = update_task(task_id, description, date)
+async def _update_task(
+    task_id: int, description: str, date: datetime, session=Depends(get_db)
+):
+    task: TaskModel | None = update_task(task_id, description, date, session)
     return [task], f"Task with task_id: {task_id} not updated"
 
 
 @router.delete("/delete_task/{task_id}", response_model=TaskResponse)
 @task_response_decorator
-async def _delete_task(task_id: str):
-    task: TaskModel | None = delete_task(task_id)
+async def _delete_task(task_id: int, session=Depends(get_db)):
+    task: TaskModel | None = delete_task(task_id, session)
     return [task], f"Task with task_id: {task_id} not deleted"

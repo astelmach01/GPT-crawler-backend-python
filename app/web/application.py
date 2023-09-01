@@ -1,9 +1,11 @@
+import logging
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import UJSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import StreamingResponse
 
 from app.configure_logging import configure_logging
 from app.settings import settings
@@ -16,9 +18,7 @@ APP_ROOT = Path(__file__).parent.parent
 def get_app() -> FastAPI:
     """
     Get FastAPI application.
-
     This is the main constructor of an application.
-
     :return: application.
     """
     configure_logging()
@@ -30,6 +30,15 @@ def get_app() -> FastAPI:
         openapi_url="/api/openapi.json",
         default_response_class=UJSONResponse,
     )
+
+    # log all requests and responses
+    # @app.middleware("http")
+    # async def log_responses(request: Request, call_next):
+    #     response = await call_next(request)
+    #     logging.info(
+    #        f"{request.method} {request.url} {response.status_code} {response.headers}"
+    #     )
+    #     return response
 
     app.add_middleware(
         CORSMiddleware,

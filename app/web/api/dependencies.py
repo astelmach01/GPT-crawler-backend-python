@@ -1,5 +1,5 @@
-from fastapi import Request
+from app.services.aws.rds import DatabaseSession
 
 
-def get_db(request: Request):
-    return request.app.state.db_session
+def get_db():
+    return DatabaseSession.get_session()

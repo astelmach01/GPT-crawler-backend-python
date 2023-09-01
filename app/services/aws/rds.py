@@ -66,13 +66,19 @@ def read_tasks_by_user_id(user_id: int, session: Session) -> list[TaskModel]:
 
 
 def update_task(
-    task_id: int, new_description: str, new_date: datetime, session: Session
+    task_id: int,
+    new_description: str,
+    session: Session,
+    new_date: datetime | None = None,
 ) -> TaskModel | None:
     task = read_task_by_id(task_id, session)
     if not task:
         return None
     task.description = new_description
-    task.date = new_date
+
+    if new_date:
+        task.date = new_date
+
     session.commit()
     return task
 

@@ -33,7 +33,7 @@ def task_response_decorator(func):
                 return TaskResponse(success=False, reason=log_msg)
 
             tasks = [
-                TaskSchema(task=task.description, date=task.date)
+                TaskSchema(id=task.id, task=task.description, date=task.date)
                 for task in task_result
                 if task
             ]
@@ -69,9 +69,14 @@ async def get_user_tasks(user_id: int, session=Depends(get_db)):
 @router.put("/update_task/{task_id}", response_model=TaskResponse)
 @task_response_decorator
 async def _update_task(
-    task_id: int, description: str, date: datetime, session=Depends(get_db)
+    task_id: int,
+    description: str,
+    date: datetime | None = None,
+    session=Depends(get_db),
 ):
-    task: TaskModel | None = update_task(task_id, description, date, session)
+    task: TaskModel | None = update_task(
+        task_id, description, new_date=date, session=session
+    )
     return [task], f"Task with task_id: {task_id} not updated"
 
 

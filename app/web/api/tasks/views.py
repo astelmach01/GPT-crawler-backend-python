@@ -61,8 +61,6 @@ async def create_new_task(
 @task_response_decorator
 async def get_user_tasks(user_id: int, session=Depends(get_db)):
     tasks = read_tasks_by_user_id(user_id, session)
-    if not tasks:
-        tasks = [None]  # type: ignore
     return tasks, f"No tasks found for user: {user_id}"
 
 

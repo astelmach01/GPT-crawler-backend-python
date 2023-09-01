@@ -35,7 +35,8 @@ def get_app() -> FastAPI:
     @app.middleware("http")
     async def log_responses(request: Request, call_next):
         logging.info(
-            f"{request.method} {request.url} {request.headers} {(await request.body()).decode()}"
+            f"{request.method} {request.url} {request.headers}"
+            f" {(await request.body()).decode()}"
         )
         response = await call_next(request)
         logging.info(

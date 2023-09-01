@@ -1,9 +1,6 @@
 name: Cosmo Backend
 
-on:
-  pull_request:
-    paths:
-      - '*'
+on: pull_request
 
 jobs:
   CI:

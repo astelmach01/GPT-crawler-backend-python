@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
 from app.configure_logging import configure_logging
+from app.settings import settings
 from app.web.api.router import api_router
 from app.web.lifetime import register_shutdown_event, register_startup_event
 
@@ -43,7 +44,12 @@ def get_app() -> FastAPI:
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=[
+            settings.frontend_url,
+            "http://localhost:3000",
+            "http://localhost:8000",
+        ],
+        allow_origin_regex=settings.allowed_origins_regex,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

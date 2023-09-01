@@ -49,7 +49,7 @@ class Settings(BaseSettings):
 
     # Frontend URL
     frontend_url: str
-    allowed_origins_regex: str | None = None
+    allowed_origins_regex: str = r"https://.*\.vercel\.app"
 
     host: str = "127.0.0.1"
     port: int = 8000

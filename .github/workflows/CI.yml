@@ -15,6 +15,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_ENDPOINT: ${{ secrets.DB_ENDPOINT }}
       DB_PORT: ${{ secrets.DB_PORT }}
+      frontend_url: ${{ secrets.frontend_url }}
 
     steps:
       - uses: actions/checkout@v3

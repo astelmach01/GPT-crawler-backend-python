@@ -48,7 +48,7 @@ class Settings(BaseSettings):
         )
 
     # Frontend URL
-    frontend_url: str = "https://cosmo-mp7z316jo-astelmach01-s-team.vercel.app/"
+    frontend_url: str
     allowed_origins_regex: str | None = None
 
     host: str = "127.0.0.1"

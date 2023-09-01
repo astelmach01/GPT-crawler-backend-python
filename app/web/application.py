@@ -1,11 +1,9 @@
-import logging
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import StreamingResponse
 
 from app.configure_logging import configure_logging
 from app.settings import settings

@@ -1,6 +1,8 @@
+import logging
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.requests import Request
 from fastapi.responses import UJSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
@@ -30,13 +32,13 @@ def get_app() -> FastAPI:
     )
 
     # log all requests and responses
-    # @app.middleware("http")
-    # async def log_responses(request: Request, call_next):
-    #     response = await call_next(request)
-    #     logging.info(
-    #        f"{request.method} {request.url} {response.status_code} {response.headers}"
-    #     )
-    #     return response
+    @app.middleware("http")
+    async def log_responses(request: Request, call_next):
+        response = await call_next(request)
+        logging.info(
+            f"{request.method} {request.url} {response.status_code} {response.headers}"
+        )
+        return response
 
     app.add_middleware(
         CORSMiddleware,

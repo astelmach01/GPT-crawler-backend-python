@@ -4,7 +4,12 @@ from fastapi import APIRouter, Depends
 
 from app.schemas.response import UserResponse
 from app.schemas.user import User
-from app.services.aws.rds import create_user, delete_user, read_user_by_id, update_user
+from app.services.aws.rds_crud import (
+    create_user,
+    delete_user,
+    read_user_by_id,
+    update_user,
+)
 
 from ..dependencies import get_db
 

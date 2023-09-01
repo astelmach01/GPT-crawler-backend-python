@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.schemas.response import TaskResponse
 from app.schemas.task import Task as TaskSchema
 from app.services.aws.models import Task as TaskModel
-from app.services.aws.rds import (
+from app.services.aws.rds_crud import (
     create_task,
     delete_task,
     read_tasks_by_user_id,

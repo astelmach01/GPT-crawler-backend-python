@@ -1,91 +1,32 @@
-import logging
-from datetime import datetime
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from sqlalchemy.orm import Session
+from app.services.aws.models import Base
+from app.settings import settings
 
-from .models import Task as TaskModel
-from .models import User as UserModel  # Import models from models.py
-
-
-# User
-def create_user(name: str, session: Session) -> UserModel:
-    logging.info(f"Creating user with name: {name}")
-    new_user = UserModel(name=name)
-    session.add(new_user)
-    session.commit()
-    return new_user
+DB_NAME = "user_task_db"
 
 
-def read_users(session: Session) -> list[UserModel]:
-    return session.query(UserModel).all()
+class DatabaseSession:
+    _session = None
+    _engine = None
 
+    @classmethod
+    def initialize(cls):
+        cls._engine = create_engine(settings.get_db_url(DB_NAME))
+        Base.metadata.create_all(cls._engine)
+        session = sessionmaker(bind=cls._engine)
+        cls._session = session()
 
-def read_user_by_id(user_id: int, session: Session) -> UserModel | None:
-    return session.query(UserModel).filter_by(id=user_id).first()
+    @classmethod
+    def get_session(cls):
+        if cls._session is None:
+            cls.initialize()
+        return cls._session
 
-
-def update_user(user_id: int, new_name: str, session: Session) -> UserModel | None:
-    user = read_user_by_id(user_id, session)
-    if not user:
-        return None
-    user.name = new_name
-    session.commit()
-    return user
-
-
-def delete_user(user_id: int, session: Session) -> UserModel | None:
-    user = read_user_by_id(user_id, session)
-    if not user:
-        return None
-    session.delete(user)
-    session.commit()
-    return user
-
-
-# Task
-def create_task(
-    description: str, date: datetime, user_id: int, session: Session
-) -> TaskModel:
-    new_task = TaskModel(description=description, date=date, user_id=user_id)
-    session.add(new_task)
-    session.commit()
-    return new_task
-
-
-def read_tasks(session: Session) -> list[TaskModel]:
-    return session.query(TaskModel).all()
-
-
-def read_task_by_id(task_id: int, session: Session) -> TaskModel | None:
-    return session.query(TaskModel).filter_by(id=task_id).first()
-
-
-def read_tasks_by_user_id(user_id: int, session: Session) -> list[TaskModel]:
-    return session.query(TaskModel).filter_by(user_id=user_id).all()
-
-
-def update_task(
-    task_id: int,
-    new_description: str,
-    session: Session,
-    new_date: datetime | None = None,
-) -> TaskModel | None:
-    task = read_task_by_id(task_id, session)
-    if not task:
-        return None
-    task.description = new_description
-
-    if new_date:
-        task.date = new_date
-
-    session.commit()
-    return task
-
-
-def delete_task(task_id: int, session: Session) -> TaskModel | None:
-    task = read_task_by_id(task_id, session)
-    if not task:
-        return None
-    session.delete(task)
-    session.commit()
-    return task
+    @classmethod
+    def close(cls):
+        if cls._session:
+            cls._session.close()
+        if cls._engine:
+            cls._engine.dispose()

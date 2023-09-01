@@ -1,16 +1,12 @@
 import logging
 from datetime import datetime
 
-from fastapi import Depends
-from sqlalchemy.orm import Session
-
-from app.services.aws.rds import create_task
+from app.services.aws.rds_crud import create_task
 from app.web.api.dependencies import get_db
 
 
-def create_reminder(
-    task: str, date: datetime, user_id: int, session: Session = Depends(get_db)
-) -> str:
+def create_reminder(task: str, date: datetime, user_id: int) -> str:
+    session = get_db()
     logging.info(f"Creating reminder for {task} at {date}")
 
     if create_task(task, date, user_id, session):

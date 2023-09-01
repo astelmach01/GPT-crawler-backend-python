@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from typing import List, Type
 
 from sqlalchemy.orm import Session
 

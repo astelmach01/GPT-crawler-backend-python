@@ -29,7 +29,6 @@ def test_db_session():
     db.commit()
 
     # insert a test task with a date of 12:30 on 1st Jan 2021
-    test_date = datetime(2021, 1, 1, 12, 0)
     test_task = Task(**test_task_params)
     db.add(test_task)
     db.commit()

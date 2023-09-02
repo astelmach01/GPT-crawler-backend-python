@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app.services.aws.rds_crud import create_task
-from app.tests.fixtures import test_db_session
+from app.tests.fixtures import test_db_session  # noqa
 
 
 def test_create_task(test_db_session):

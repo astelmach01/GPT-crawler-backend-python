@@ -2,7 +2,7 @@ from datetime import datetime
 
 from app.services.aws.rds_crud import read_task_by_id, update_task
 
-from ..fixtures import test_db_session, test_task_params, test_user_params
+from ..fixtures import test_db_session, test_task_params  # noqa
 
 
 def test_update_task(test_db_session):
@@ -63,7 +63,7 @@ def test_update_task_no_new_description_or_date(test_db_session):
         "task_id": 1,
     }
     try:
-        updated_task_1 = update_task(**updated_data, session=test_db_session)
+        update_task(**updated_data, session=test_db_session)
     except ValueError:
         pass
     else:

@@ -73,7 +73,7 @@ async def _update_task(
     session=Depends(get_db),
 ):
     task: TaskModel | None = update_task(
-        task_id, description, new_date=date, session=session
+        task_id, new_description=description, new_date=date, session=session
     )
     return [task], f"Task with task_id: {task_id} not updated"
 

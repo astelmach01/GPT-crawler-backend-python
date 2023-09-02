@@ -66,14 +66,19 @@ def read_tasks_by_user_id(user_id: int, session: Session) -> list[TaskModel]:
 
 def update_task(
     task_id: int,
-    new_description: str,
     session: Session,
+    new_description: str | None = None,
     new_date: datetime | None = None,
 ) -> TaskModel | None:
+    if not new_description and not new_date:
+        raise ValueError("No new data provided to update task")
+
     task = read_task_by_id(task_id, session)
     if not task:
         return None
-    task.description = new_description
+
+    if new_description:
+        task.description = new_description
 
     if new_date:
         task.date = new_date

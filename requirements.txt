@@ -146,6 +146,10 @@ pydantic-settings==2.0.3
 pymysql==1.1.0
     # via -r requirements.in
 pytest==7.4.0
+    # via
+    #   -r requirements.in
+    #   pytest-dotenv
+pytest-dotenv==0.5.2
     # via -r requirements.in
 python-dateutil==2.8.2
     # via botocore
@@ -153,6 +157,7 @@ python-dotenv==1.0.0
     # via
     #   -r requirements.in
     #   pydantic-settings
+    #   pytest-dotenv
     #   uvicorn
 pyyaml==6.0.1
     # via

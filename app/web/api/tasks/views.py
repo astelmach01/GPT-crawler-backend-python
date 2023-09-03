@@ -25,9 +25,10 @@ def task_response_decorator(func):
     async def wrapper(*args, **kwargs) -> TaskResponse:
         try:
             task_result: List[TaskModel | None]
+            logging.info(
+                f"Executing {func.__name__} with args: {args}" f" and kwargs: {kwargs}"
+            )
             task_result, log_msg = await func(*args, **kwargs)
-
-            logging.info(f"Executed {func.__name__} with result: {task_result}")
 
             if None in task_result:
                 return TaskResponse(success=False, reason=log_msg)
@@ -37,6 +38,8 @@ def task_response_decorator(func):
                 for task in task_result
                 if task
             ]
+            prettied_tasks = [f"Task: {task.model_dump_json()}" for task in tasks]
+            logging.info(f"Returning tasks: {prettied_tasks}")
             return TaskResponse(success=True, tasks=tasks, reason="Success")
 
         except Exception as e:

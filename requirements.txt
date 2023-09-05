@@ -54,6 +54,8 @@ dataclasses-json==0.5.14
     # via langchain
 fastapi==0.101.1
     # via -r requirements.in
+flake8==6.1.0
+    # via -r requirements.in
 frozenlist==1.4.0
     # via
     #   aiohttp
@@ -90,6 +92,8 @@ loguru==0.7.0
     # via -r requirements.in
 marshmallow==3.20.1
     # via dataclasses-json
+mccabe==0.7.0
+    # via flake8
 multidict==6.0.4
     # via
     #   aiohttp
@@ -132,6 +136,8 @@ pluggy==1.2.0
     # via pytest
 psycopg2-binary==2.9.7
     # via -r requirements.in
+pycodestyle==2.11.0
+    # via flake8
 pydantic==2.2.1
     # via
     #   -r requirements.in
@@ -143,6 +149,8 @@ pydantic-core==2.6.1
     # via pydantic
 pydantic-settings==2.0.3
     # via -r requirements.in
+pyflakes==3.1.0
+    # via flake8
 pymysql==1.1.0
     # via -r requirements.in
 pytest==7.4.0

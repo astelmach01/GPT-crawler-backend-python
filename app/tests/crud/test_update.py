@@ -1,8 +1,7 @@
 from datetime import datetime
 
+from app.conftest import test_db_session, test_task_params, test_user_params
 from app.services.aws.rds_crud import read_task_by_id, update_task
-
-from ..fixtures import test_db_session, test_task_params  # noqa
 
 
 def test_update_task(test_db_session):

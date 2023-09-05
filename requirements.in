@@ -20,6 +20,7 @@ types-PyMySQL
 
 pytest
 pytest-dotenv
+flake8
 black
 isort
 mypy

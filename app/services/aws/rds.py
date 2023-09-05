@@ -15,7 +15,7 @@ class DatabaseSession:
     def initialize(cls):
         cls._engine = create_engine(settings.get_db_url(DB_NAME))
         Base.metadata.create_all(cls._engine)
-        session = sessionmaker(bind=cls._engine)
+        session = sessionmaker(bind=cls._engine, autoflush=True)
         cls._session = session()
 
     @classmethod

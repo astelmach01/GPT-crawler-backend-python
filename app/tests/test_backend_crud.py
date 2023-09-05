@@ -163,3 +163,61 @@ async def test_update_task_get_tasks(client: AsyncClient, fastapi_app: FastAPI) 
         ],
         "reason": "Success",
     }
+
+
+@pytest.mark.asyncio
+async def test_stale_data_after_update(
+    client: AsyncClient, fastapi_app: FastAPI
+) -> None:
+    # Create a task
+    new_task = {"description": "test task 3", "date": datetime(2021, 1, 1, 12, 0)}
+    response = await client.post(
+        fastapi_app.url_path_for("create_new_task", user_id=1),
+        params=new_task,
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+    # Update the task
+    updated_task = {"description": "updated test task 3"}
+    response = await client.put(
+        fastapi_app.url_path_for(
+            "_update_task", task_id=response.json()["tasks"][0]["id"]
+        ),
+        params=updated_task,
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+    # Fetch the task and ensure it reflects the update
+    response = await client.get(
+        fastapi_app.url_path_for("get_user_tasks", user_id=1),
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json()["tasks"][-1]["task"] == "updated test task 3"
+
+
+@pytest.mark.asyncio
+async def test_stale_data_after_delete(
+    client: AsyncClient, fastapi_app: FastAPI
+) -> None:
+    # Create a task
+    new_task = {"description": "test task 4", "date": datetime(2021, 1, 1, 12, 0)}
+    response = await client.post(
+        fastapi_app.url_path_for("create_new_task", user_id=1),
+        params=new_task,
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+    # Delete the task
+    response = await client.delete(
+        fastapi_app.url_path_for(
+            "_delete_task", task_id=response.json()["tasks"][0]["id"]
+        ),
+    )
+    assert response.status_code == status.HTTP_200_OK
+
+    # Fetch tasks and ensure the deleted task is not returned
+    response = await client.get(
+        fastapi_app.url_path_for("get_user_tasks", user_id=1),
+    )
+    assert response.status_code == status.HTTP_200_OK
+    assert not any(task["task"] == "test task 4" for task in response.json()["tasks"])

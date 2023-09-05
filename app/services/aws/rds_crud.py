@@ -30,6 +30,7 @@ def update_user(user_id: int, new_name: str, session: Session) -> UserModel | No
     if not user:
         return None
     user.name = new_name
+    session.add(user)
     session.commit()
     return user
 
@@ -68,7 +69,7 @@ def read_task_by_id(task_id: int, session: Session) -> TaskModel | None:
 
 def read_tasks_by_user_id(user_id: int, session: Session) -> list[TaskModel]:
     logging.info(f"Reading tasks for user with id: {user_id}")
-    return session.query(TaskModel).filter_by(user_id=user_id).with_for_update().all()
+    return session.query(TaskModel).filter_by(user_id=user_id).all()
 
 
 def update_task(
@@ -91,6 +92,7 @@ def update_task(
     if new_date:
         task.date = new_date
 
+    session.add(task)
     session.commit()
     return task
 

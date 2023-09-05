@@ -77,6 +77,7 @@ def update_task(
     new_description: str | None = None,
     new_date: datetime | None = None,
 ) -> TaskModel | None:
+    logging.info(f"Updating task with id: {task_id}")
     if not new_description and not new_date:
         raise ValueError("No new data provided to update task")
 

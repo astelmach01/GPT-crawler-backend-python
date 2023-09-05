@@ -14,7 +14,7 @@ class DatabaseSession:
     @classmethod
     def initialize(cls):
         cls._engine = create_engine(
-            settings.get_db_url(DB_NAME), connect_args={"wait_timeout": 10}
+            settings.get_db_url(DB_NAME), connect_args={"timeout": 10}
         )
         Base.metadata.create_all(cls._engine)
         session = sessionmaker(bind=cls._engine, autoflush=True)

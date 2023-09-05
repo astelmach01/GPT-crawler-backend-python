@@ -3,7 +3,6 @@ from datetime import datetime
 import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
-from services.aws.models import Task
 from starlette import status
 
 

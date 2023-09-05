@@ -4,7 +4,7 @@ from typing import Any, AsyncGenerator
 import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.services.aws.models import Base, Task, User

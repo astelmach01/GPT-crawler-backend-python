@@ -56,7 +56,7 @@ async def create_new_task(
     user_id: int,
     session=Depends(get_db),
 ):
-    task: TaskModel = create_task(description, date, user_id, session)
+    task = create_task(description, date, user_id, session)
     return [task], f"Task for user_id: {user_id} not created"
 
 

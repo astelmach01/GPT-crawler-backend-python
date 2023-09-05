@@ -1,6 +1,5 @@
+from app.conftest import test_db_session
 from app.services.aws.rds_crud import read_tasks_by_user_id
-
-from ..fixtures import test_db_session  # noqa
 
 
 def test_get_user_tasks(test_db_session):

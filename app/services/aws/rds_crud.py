@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from .models import Task as TaskModel
@@ -45,10 +46,15 @@ def delete_user(user_id: int, session: Session) -> UserModel | None:
 # Task
 def create_task(
     description: str, date: datetime, user_id: int, session: Session
-) -> TaskModel:
-    new_task = TaskModel(description=description, date=date, user_id=user_id)
-    session.add(new_task)
-    session.commit()
+) -> TaskModel | None:
+    try:
+        new_task = TaskModel(description=description, date=date, user_id=user_id)
+        session.add(new_task)
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        return None
+
     return new_task
 
 

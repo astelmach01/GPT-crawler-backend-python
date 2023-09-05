@@ -62,7 +62,9 @@ test_user_params = {"name": "test user", "id": 1}
 
 @pytest.fixture(scope="function")
 def test_db_session():
-    engine = create_engine(settings.get_db_url("test_user_task_db"))
+    engine = create_engine(
+        settings.get_db_url("test_user_task_db"), connect_args={"wait_timeout": 1}
+    )
     Base.metadata.create_all(engine)
     session_local = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     db = session_local()

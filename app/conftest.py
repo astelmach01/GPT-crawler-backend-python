@@ -4,7 +4,7 @@ from typing import Any, AsyncGenerator
 import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 
 from app.services.aws.models import Base, Task, User
@@ -60,9 +60,16 @@ test_task_params = {
 test_user_params = {"name": "test user", "id": 1}
 
 
+def set_query_timeout(
+    conn, clauseelement, multiparams, params, execution_options, compiled_sql
+):
+    conn = conn.execution_options(timeout=10)
+
+
 @pytest.fixture(scope="function")
 def test_db_session():
     engine = create_engine(settings.get_db_url("test_user_task_db"))
+    event.listen(engine, "before_cursor_execute", set_query_timeout)
     Base.metadata.create_all(engine)
     session_local = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     db = session_local()

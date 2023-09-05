@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from app.conftest import test_db_session, test_task_params, test_user_params
+from app.conftest import test_db_session
 from app.services.aws.rds_crud import create_task, delete_task, read_task_by_id
 
 

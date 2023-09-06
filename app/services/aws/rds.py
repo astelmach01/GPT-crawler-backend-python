@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, pool
 from sqlalchemy.orm import sessionmaker
 
 from app.services.aws.models import Base
@@ -14,7 +14,13 @@ class DatabaseSession:
     @classmethod
     def initialize(cls):
         # query timeout of 10 seconds
-        cls._engine = create_engine(settings.get_db_url(DB_NAME))
+        cls._engine = create_engine(
+            settings.get_db_url(DB_NAME),
+            poolclass=pool.QueuePool,
+            pool_size=5,
+            pool_pre_ping=True,
+            max_overflow=10,
+        )
 
         Base.metadata.create_all(cls._engine)
         session = sessionmaker(bind=cls._engine, autoflush=True)

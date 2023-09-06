@@ -18,7 +18,11 @@ format:
 type:
 	mypy .
 
-check: sort format type
+
+fix-imports:
+	autoflake --remove-all-unused-imports --recursive --remove-unused-variables --in-place app --exclude=__init__.py
+
+check: sort format type fix-imports
 
 compile: $(REQUIREMENTS_TXT)
 

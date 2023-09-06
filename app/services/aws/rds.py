@@ -8,33 +8,27 @@ DB_NAME = "user_task_db"
 
 
 class DatabaseSession:
-    _session = None
     _engine = None
 
     @classmethod
     def initialize(cls):
-        # query timeout of 10 seconds
-        cls._engine = create_engine(
-            settings.get_db_url(DB_NAME),
-            poolclass=pool.QueuePool,
-            pool_size=5,
-            pool_pre_ping=True,
-            max_overflow=10,
-        )
-
-        Base.metadata.create_all(cls._engine)
-        session = sessionmaker(bind=cls._engine, autoflush=True)
-        cls._session = session()
+        if cls._engine is None:
+            cls._engine = create_engine(
+                settings.get_db_url(DB_NAME),
+                poolclass=pool.QueuePool,
+                pool_size=5,
+                pool_pre_ping=True,
+                max_overflow=10,
+            )
+            Base.metadata.create_all(cls._engine)
 
     @classmethod
     def get_session(cls):
-        if cls._session is None:
-            cls.initialize()
-        return cls._session
+        cls.initialize()
+        session = sessionmaker(bind=cls._engine, autoflush=True)
+        return session()
 
     @classmethod
-    def close(cls):
-        if cls._session:
-            cls._session.close()
-        if cls._engine:
-            cls._engine.dispose()
+    def close(cls, session):
+        if session:
+            session.close()

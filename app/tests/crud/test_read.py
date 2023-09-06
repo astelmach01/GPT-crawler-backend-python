@@ -1,4 +1,3 @@
-from app.conftest import test_db_session
 from app.services.aws.rds_crud import read_tasks_by_user_id
 
 

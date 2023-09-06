@@ -6,8 +6,6 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 from starlette import status
 
-from app.conftest import test_task_params
-
 
 # test adding a task to the "api/tasks/create_task/{user_id}" endpoint
 @pytest.mark.asyncio

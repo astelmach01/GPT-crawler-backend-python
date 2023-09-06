@@ -25,6 +25,8 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
+autoflake==2.2.1
+    # via -r requirements.in
 black==23.7.0
     # via -r requirements.in
 boto3==1.28.30
@@ -150,7 +152,9 @@ pydantic-core==2.6.1
 pydantic-settings==2.0.3
     # via -r requirements.in
 pyflakes==3.1.0
-    # via flake8
+    # via
+    #   autoflake
+    #   flake8
 pymysql==1.1.0
     # via -r requirements.in
 pytest==7.4.0

@@ -21,6 +21,7 @@ types-PyMySQL
 pytest
 pytest-asyncio
 pytest-dotenv
+autoflake
 flake8
 black
 isort

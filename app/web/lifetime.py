@@ -21,6 +21,6 @@ def register_startup_event(app: FastAPI) -> Callable[[], Awaitable[None]]:
 def register_shutdown_event(app: FastAPI) -> Callable[[], Awaitable[None]]:
     @app.on_event("shutdown")
     async def _shutdown() -> None:
-        DatabaseSession.close()
+        DatabaseSession.close(app.state.db_session)
 
     return _shutdown

@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from functools import wraps
 
+import sqlalchemy
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -19,7 +20,7 @@ def handle_db_errors(func):
                 break
         try:
             return func(*args, **kwargs)
-        except Exception as e:
+        except sqlalchemy.exc.IntegrityError as e:
             if session:
                 session.rollback()
             logging.error(f"Error in DB operation: {e}")

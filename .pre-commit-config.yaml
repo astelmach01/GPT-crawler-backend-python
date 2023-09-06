@@ -26,3 +26,9 @@ repos:
             additional_dependencies:
                 - "pydantic>=1.10.4"
             name: Validate types with MyPy
+
+  -   repo: https://github.com/PyCQA/flake8
+      rev: 4.0.1  # The git tag for the version you want to use
+      hooks:
+        -   id: flake8
+            args: [--config=.flake8]

@@ -6,6 +6,8 @@ extend-ignore = E203
 docstring_style=sphinx
 
 ignore =
+  ; too complex
+  C901,
   ; redefinition of used
   F811,
   ; Found `f` string

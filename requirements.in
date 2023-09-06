@@ -19,6 +19,7 @@ psycopg2-binary
 types-PyMySQL
 
 pytest
+pytest-asyncio
 pytest-dotenv
 flake8
 black

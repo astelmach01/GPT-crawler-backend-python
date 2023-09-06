@@ -79,8 +79,9 @@ def create_task(
         new_task = TaskModel(description=description, date=date, user_id=user_id)
         session.add(new_task)
         session.commit()
-    except IntegrityError:
+    except IntegrityError as e:
         session.rollback()
+        logging.error(f"Error in DB operation: {e}")
         return None
 
     return new_task

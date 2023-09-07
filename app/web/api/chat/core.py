@@ -1,58 +1,22 @@
-import json
+from langchain.agents import AgentType, initialize_agent
+from langchain.chat_models import ChatOpenAI
+from langchain.schema import SystemMessage
 
-import openai
+from app.settings import settings
 
-from .functions import function_descriptions, function_names
+from .functions import tools
+from .memory import get_memory
 from .prompts import intro
 
-MODEL = "gpt-3.5-turbo"
+llm = ChatOpenAI(openai_api_key=settings.OPENAI_API_KEY, model=settings.MODEL_NAME)
 
 
-def _format_user_message(message: str) -> dict:
-    return {"role": "user", "content": message}
-
-
-def _format_assistant_message(message: str) -> dict:
-    return {"role": "assistant", "content": message}
-
-
-def _format_system_message(message: str) -> dict:
-    return {"role": "system", "content": message}
-
-
-def _handle_function_call(response: dict) -> str:
-    response_message = response["message"]
-
-    function_name = response_message["function_call"]["name"]
-    function_to_call = function_names[function_name]
-    function_args = json.loads(response_message["function_call"]["arguments"])
-
-    function_response = function_to_call(**function_args)
-    return function_response
-
-
-def chatgpt_response(prompt, model=MODEL) -> str:
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=[_format_system_message(intro), _format_user_message(prompt)],
+def get_response(prompt: str, session_id):
+    agent = initialize_agent(
+        llm=llm,
+        agent=AgentType.OPENAI_FUNCTIONS,
+        tools=tools,
+        memory=get_memory(session_id=session_id),
+        agent_kwargs={"SystemMessage": SystemMessage(content=intro)},
     )
-
-    return response["choices"][0]["message"]["content"]
-
-
-def chatgpt_function_response(
-    prompt: str, functions=function_descriptions, model=MODEL
-) -> str:
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=[
-            _format_system_message(intro),
-            _format_user_message(prompt),
-        ],
-        functions=functions,
-    )["choices"][0]
-
-    if response["finish_reason"] == "function_call":
-        return _handle_function_call(response)
-
-    return response["message"]["content"]
+    return agent.run(prompt)

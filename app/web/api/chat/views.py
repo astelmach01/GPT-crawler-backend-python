@@ -5,9 +5,11 @@ from fastapi import APIRouter
 from app.schemas.chat import ChatBase
 from app.schemas.response import ChatResponse
 
-from .core import chatgpt_function_response
+from .core import get_response
 
 router = APIRouter()
+
+SESSION_ID = "0"
 
 
 @router.post("/request")
@@ -19,5 +21,5 @@ async def chat(chat_request: ChatBase) -> ChatResponse:
     :return: chat response.
     """
     logging.info(f"Chat request: {chat_request}")
-    response = chatgpt_function_response(chat_request.prompt)
+    response = get_response(chat_request.prompt, SESSION_ID)
     return ChatResponse(success=True, response=response)

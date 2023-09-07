@@ -29,6 +29,7 @@ class Settings(BaseSettings):
 
     OPENAI_API_KEY: str
     OPENAI_ORGANIZATION: str
+    MODEL_NAME: str = "gpt-3.5-turbo"
 
     # AWS
     AWS_ACCESS_KEY: str

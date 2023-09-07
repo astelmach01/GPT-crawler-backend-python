@@ -1,15 +1,12 @@
-from langchain.chains import LLMChain
+from langchain.agents import AgentType, initialize_agent
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.memory.chat_message_histories import DynamoDBChatMessageHistory
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    SystemMessagePromptTemplate,
-)
+from langchain.tools import StructuredTool
+from pydantic.v1 import BaseModel, Field
 
 from app.settings import settings
-from app.web.api.chat.prompts import intro
+from app.web.api.tasks.core import create_reminder
 
 TABLE_NAME = "SessionTable"
 session_id = "0"
@@ -24,18 +21,33 @@ memory = ConversationBufferMemory(
 )
 llm = ChatOpenAI(openai_api_key=settings.OPENAI_API_KEY)
 
-system_prompt = SystemMessagePromptTemplate.from_template(intro)
-human_template = "{text}"
-human_message_prompt = HumanMessagePromptTemplate.from_template(human_template)
 
-chat_prompt = ChatPromptTemplate.from_messages([system_prompt, human_message_prompt])
+class ReminderInput(BaseModel):
+    task: str = Field(..., description="The task to be reminded of")
+    days: int = Field(..., description="The number of days to wait")
+    hours: int = Field(..., description="The number of hours to wait")
+    minutes: int = Field(..., description="The number of minutes to wait")
 
-chain = LLMChain(llm=llm, prompt=chat_prompt, memory=memory)
+
+tools = [
+    StructuredTool.from_function(
+        func=create_reminder,
+        name="create_reminder",
+        description="This function handles the logic for creating a reminder for a "
+        "generic task at a given date and time. Integer parameters should be greater "
+        "than or equal to zero.",
+        args_schema=ReminderInput,
+    )
+]
+
+agent = initialize_agent(
+    llm=llm, agent=AgentType.OPENAI_FUNCTIONS, tools=tools, memory=memory
+)
 
 
 def main():
     # Run the chain
-    print(chain.run("I would like to book a flight to London."))
+    print(agent.run(input("Enter a message: ")))
 
     # Print the output
     print(memory.chat_memory.messages)

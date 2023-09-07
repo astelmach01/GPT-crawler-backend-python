@@ -8,18 +8,6 @@ from .prompts import intro
 MODEL = "gpt-3.5-turbo"
 
 
-def _format_user_message(message: str) -> dict:
-    return {"role": "user", "content": message}
-
-
-def _format_assistant_message(message: str) -> dict:
-    return {"role": "assistant", "content": message}
-
-
-def _format_system_message(message: str) -> dict:
-    return {"role": "system", "content": message}
-
-
 def _handle_function_call(response: dict) -> str:
     response_message = response["message"]
 
@@ -29,6 +17,14 @@ def _handle_function_call(response: dict) -> str:
 
     function_response = function_to_call(**function_args)
     return function_response
+
+
+def _format_system_message(message: str) -> dict:
+    return {"speaker": "system", "text": message}
+
+
+def _format_user_message(message: str) -> dict:
+    return {"speaker": "user", "text": message}
 
 
 def chatgpt_response(prompt, model=MODEL) -> str:

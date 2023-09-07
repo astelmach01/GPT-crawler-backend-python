@@ -2,11 +2,14 @@ from langchain.agents import AgentType, initialize_agent
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.memory.chat_message_histories import DynamoDBChatMessageHistory
+from langchain.schema import SystemMessage
 from langchain.tools import StructuredTool
 from pydantic.v1 import BaseModel, Field
 
 from app.settings import settings
 from app.web.api.tasks.core import create_reminder
+
+from .prompts import intro
 
 TABLE_NAME = "SessionTable"
 session_id = "0"
@@ -41,7 +44,11 @@ tools = [
 ]
 
 agent = initialize_agent(
-    llm=llm, agent=AgentType.OPENAI_FUNCTIONS, tools=tools, memory=memory
+    llm=llm,
+    agent=AgentType.OPENAI_FUNCTIONS,
+    tools=tools,
+    memory=memory,
+    agent_kwargs={"SystemMessage": SystemMessage(content=intro)},
 )
 
 

@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     # AWS
     AWS_ACCESS_KEY: str
     AWS_SECRET_ACCESS_KEY: str
+    AWS_REGION: str
 
     # DB
     DB_USERNAME: str
@@ -60,7 +61,7 @@ class Settings(BaseSettings):
     reload: bool = True
 
     # Current environment
-    environment: str = "dev"
+    ENVIRONMENT: str = "development"
 
     # Variables for RabbitMQ
     rabbit_host: str = "app-rmq"

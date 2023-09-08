@@ -11,11 +11,10 @@ def get_memory(session_id: str):
         ConversationBufferMemory: A memory object with chat history saved to dynamodb
     """
 
-    # Define the necessary components
+    # Define the necessary components with the dynamodb endpoint
     message_history = DynamoDBChatMessageHistory(
         table_name=TABLE_NAME,
         session_id=session_id,
-        endpoint_url="https://dynamodb.us-east-2.amazonaws.com",
     )
 
     memory = ConversationBufferMemory(

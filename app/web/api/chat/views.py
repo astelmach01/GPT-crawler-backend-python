@@ -22,4 +22,4 @@ async def chat(chat_request: ChatBase) -> ChatResponse:
     """
     logging.info(f"Chat request: {chat_request}")
     response = get_response(chat_request.prompt, SESSION_ID)
-    return ChatResponse(success=True, response=response)
+    return ChatResponse(success=True, response=response, reason="Success")

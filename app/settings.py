@@ -61,7 +61,7 @@ class Settings(BaseSettings):
     reload: bool = True
 
     # Current environment
-    ENVIRONMENT: str = "dev"
+    ENVIRONMENT: str = "development"
 
     # Variables for RabbitMQ
     rabbit_host: str = "app-rmq"

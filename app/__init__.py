@@ -12,9 +12,7 @@ def set_aws_credentials_and_region(
     access_key, secret_key, region_name, profile_name="default"
 ):
     """Set AWS credentials and region using botocore."""
-
-    # Create a botocore session
-    session = botocore.session.Session()
+    botocore.session.get_session()
 
     # Load existing configuration if it exists
     credentials_file = os.path.expanduser("~/.aws/credentials")
@@ -45,15 +43,19 @@ def set_aws_credentials_and_region(
     existing_config[profile_config_key]["region"] = region_name
 
     # Save the updated configurations
-    session.full_config = existing_credentials
-    session.set_config_variable("credentials_file", credentials_file)
-    session.emit("session-initialized", session=session)
-    session.emit("before-config-write", config=existing_credentials)
+    with open(credentials_file, "w") as f:
+        for section, values in existing_credentials.items():
+            f.write(f"[{section}]\n")
+            for key, value in values.items():
+                f.write(f"{key} = {value}\n")
+            f.write("\n")
 
-    session.full_config = existing_config
-    session.set_config_variable("config_file", config_file)
-    session.emit("session-initialized", session=session)
-    session.emit("before-config-write", config=existing_config)
+    with open(config_file, "w") as f:
+        for section, values in existing_config.items():
+            f.write(f"[{section}]\n")
+            for key, value in values.items():
+                f.write(f"{key} = {value}\n")
+            f.write("\n")
 
     logging.info(
         f"Credentials and region for profile '{profile_name}' \

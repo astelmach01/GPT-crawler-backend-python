@@ -13,7 +13,9 @@ def get_memory(session_id: str):
 
     # Define the necessary components
     message_history = DynamoDBChatMessageHistory(
-        table_name=TABLE_NAME, session_id=session_id
+        table_name=TABLE_NAME,
+        session_id=session_id,
+        endpoint_url="https://dynamodb.us-east-2.amazonaws.com",
     )
 
     memory = ConversationBufferMemory(

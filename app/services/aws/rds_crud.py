@@ -98,8 +98,11 @@ def read_task_by_id(task_id: int, session: Session) -> TaskModel | None:
 
 
 @handle_db_errors
-def read_tasks_by_user_id(user_id: int, session: Session) -> list[TaskModel]:
+def read_tasks_by_user_id(user_id: int, session: Session) -> list[TaskModel] | None:
     logging.info(f"Reading tasks for user with id: {user_id}")
+    user = read_user_by_id(user_id, session)
+    if not user:
+        return None
     return session.query(TaskModel).filter_by(user_id=user_id).all()
 
 

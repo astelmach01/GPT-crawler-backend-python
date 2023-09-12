@@ -16,6 +16,6 @@ def create_reminder(
     logging.info(f"Creating reminder for {task} at {date}")
 
     if create_task(task, date, user_id, session):
-        return f"Successfilly created reminder: {task} at {date}"
-
+        return f"Successfilly created reminder: {task} {days} days from now, {hours}  \
+    hours from now, {minutes} minutes from now"
     return "Failed to create reminder"

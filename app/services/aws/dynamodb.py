@@ -6,15 +6,18 @@ from mypy_boto3_dynamodb.type_defs import AttributeValueUpdateTypeDef
 
 from app.settings import settings
 
-REGION = "us-east-2"
+REGION = settings.AWS_REGION
+TABLE_NAME = "SessionTable"
 SUCCESS = 200
 
-client = boto3.client(
-    "dynamodb",
+session = boto3.session.Session(
     aws_access_key_id=settings.AWS_ACCESS_KEY,
     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-    region_name=REGION,
+    region_name=settings.AWS_REGION,
 )
+
+# create the dynamodb client
+client = session.client("dynamodb", region_name=REGION)
 
 
 def put_item(

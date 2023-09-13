@@ -42,6 +42,22 @@ async def create_new_user(
     return user, f"User with name: {username} already exists"
 
 
+# get current user
+@router.get("/me", response_model=UserResponse)
+@user_response_decorator
+async def get_me(session=Depends(get_db), current_user=Depends(get_current_user)):
+    """Gets the current user.
+
+    Args:
+        session (_type_, optional): _description_. Defaults to Depends(get_db).
+
+    Returns:
+        UserResponse: The response from the server.
+    """
+    user = await read_user_by_id(current_user.id, session)
+    return user, f"User with id: {current_user.id} not found"
+
+
 @router.get("/{user_id}", response_model=UserResponse)
 @user_response_decorator
 async def get_user(

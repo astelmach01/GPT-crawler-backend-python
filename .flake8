@@ -109,3 +109,4 @@ exclude =
   ./.vscode,
   app/tests/*,
   *migrations*,
+  alembic/*,

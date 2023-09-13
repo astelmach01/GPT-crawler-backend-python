@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, AsyncGenerator
+from typing import AsyncGenerator
 
 import pytest
 from fastapi import FastAPI
@@ -39,7 +39,6 @@ def fastapi_app(test_db_session) -> FastAPI:
 @pytest.fixture
 async def client(
     fastapi_app: FastAPI,
-    anyio_backend: Any,
 ) -> AsyncGenerator[AsyncClient, None]:
     """
     Fixture that creates client for requesting server.
@@ -57,7 +56,7 @@ test_task_params = {
     "user_id": 1,
 }
 
-test_user_params = {"name": "test user", "id": 1}
+test_user_params = {"username": "test user", "hashed_password": "pass", "id": 1}
 
 
 @pytest.fixture(scope="function")

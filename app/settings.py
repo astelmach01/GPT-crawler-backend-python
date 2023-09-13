@@ -42,6 +42,9 @@ class Settings(BaseSettings):
     DB_ENDPOINT: str
     DB_PORT: int
 
+    JWT_SECRET_KEY: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
     # get url for aws rds mysql
     def get_db_url(self, db_name) -> str:
         return (

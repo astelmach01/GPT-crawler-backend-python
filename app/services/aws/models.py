@@ -7,7 +7,8 @@ Base = declarative_base()
 class User(Base):  # type: ignore
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    name = Column(String(50))
+    username = Column(String(50))
+    hashed_password = Column(String(100))
 
 
 class Task(Base):  # type: ignore

@@ -7,28 +7,29 @@ from .functions import function_descriptions, function_names
 from .memory import convert_message_buffer_to_openai, get_memory
 
 MODEL = "gpt-3.5-turbo"
-SESSION_ID = "0"
 
 
-def _handle_function_call(response: dict) -> str:
+async def _handle_function_call(response: dict, user_id) -> str:
     response_message = response["message"]
 
     function_name = response_message["function_call"]["name"]
     function_to_call = function_names[function_name]
     function_args = json.loads(response_message["function_call"]["arguments"])
 
-    function_response = function_to_call(**function_args)
+    function_args["user_id"] = user_id
+
+    function_response = await function_to_call(**function_args)
     return function_response
 
 
-def chatgpt_response(prompt, model=MODEL, session_id: str = SESSION_ID) -> str:
-    memory = get_memory(session_id)
+async def chatgpt_response(prompt, username: str, model=MODEL) -> str:
+    memory = get_memory(username)
     memory.chat_memory.add_user_message(prompt)
 
     messages = convert_message_buffer_to_openai(memory)
 
     logging.info(f"Memory: {messages}")
-    response = openai.ChatCompletion.create(
+    response = await openai.ChatCompletion.acreate(
         model=model,
         messages=messages,
     )
@@ -39,27 +40,29 @@ def chatgpt_response(prompt, model=MODEL, session_id: str = SESSION_ID) -> str:
     return answer
 
 
-def chatgpt_function_response(
+async def chatgpt_function_response(
     prompt: str,
+    username: str,
     functions=function_descriptions,
     model=MODEL,
-    session_id: str = SESSION_ID,
+    **kwargs,
 ) -> str:
-    memory = get_memory(session_id)
+    memory = get_memory(username)
     memory.chat_memory.add_user_message(prompt)
 
     messages = convert_message_buffer_to_openai(memory)
 
     logging.info(f"Memory for function response: {messages}")
 
-    response = openai.ChatCompletion.create(
+    response = await openai.ChatCompletion.acreate(
         model=model,
         messages=messages,
         functions=functions,
-    )["choices"][0]
+    )
+    response = response["choices"][0]
 
     if response["finish_reason"] == "function_call":
-        answer = _handle_function_call(response)
+        answer = await _handle_function_call(response, **kwargs)
 
     else:
         answer = response["message"]["content"]

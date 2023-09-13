@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 
 from .task import Task
-from .user import User
 
 
 class Response(BaseModel):
@@ -14,10 +13,17 @@ class TaskResponse(Response):
 
 
 class UserResponse(Response):
-    user: User | None = None
+    user_id: int | None = None
 
 
 class ChatResponse(Response):
     """Generic chat response."""
 
     response: str | None = None
+
+
+class TokenResponse(Response):
+    """Generic token response."""
+
+    access_token: str | None = None
+    token_type: str | None = None

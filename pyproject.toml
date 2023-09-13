@@ -7,6 +7,7 @@ paths = [
     ".venv",
     ".git",
     "build",
+    "alembic",
 ]
 
 [build-system]

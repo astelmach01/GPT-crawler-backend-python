@@ -37,7 +37,7 @@ async def create_new_user(
     password: str,
     session=Depends(get_db),
 ):
-    hashed_password = get_password_hash(password)
+    hashed_password = await get_password_hash(password)
     user = await create_user(username, hashed_password, session)
     return user, f"User with name: {username} already exists"
 

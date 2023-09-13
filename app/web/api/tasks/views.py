@@ -71,6 +71,15 @@ async def get_user_tasks(
     return tasks, f"No tasks found for user: {user_id}"
 
 
+@router.get("/current_tasks", response_model=TaskResponse)
+@task_response_decorator
+async def get_current_user_tasks(
+    session=Depends(get_db), current_user=Depends(get_current_user)
+):
+    tasks = await read_tasks_by_user_id(current_user.id, session)
+    return tasks, f"No tasks found for current user: {current_user.id}"
+
+
 @router.put("/update_task/{task_id}", response_model=TaskResponse)
 @task_response_decorator
 async def _update_task(

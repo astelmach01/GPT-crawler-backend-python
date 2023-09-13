@@ -6,12 +6,12 @@ from langchain.memory import ConversationBufferMemory
 from langchain.memory.chat_message_histories import DynamoDBChatMessageHistory
 from langchain.schema.messages import SystemMessage
 
-from app.services.aws.dynamodb import TABLE_NAME, session
+from app.services.aws.dynamodb import PRIMARY_KEY, TABLE_NAME, session
 
 from .prompts import system_prompt
 
 
-def get_memory(session_id: str):
+def get_memory(username: str):
     """Get a conversation buffer with chathistory saved to dynamodb
 
     Returns:
@@ -21,7 +21,8 @@ def get_memory(session_id: str):
     # Define the necessary components with the dynamodb endpoint
     message_history = DynamoDBChatMessageHistory(
         table_name=TABLE_NAME,
-        session_id=session_id,
+        session_id=username,
+        primary_key_name=PRIMARY_KEY,
         boto3_session=session,
     )
 

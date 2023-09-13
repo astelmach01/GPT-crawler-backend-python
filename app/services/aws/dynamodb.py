@@ -7,7 +7,8 @@ from mypy_boto3_dynamodb.type_defs import AttributeValueUpdateTypeDef
 from app.settings import settings
 
 REGION = settings.AWS_REGION
-TABLE_NAME = "SessionTable"
+TABLE_NAME = "Chat_History"
+PRIMARY_KEY = "username"
 SUCCESS = 200
 
 session = boto3.session.Session(

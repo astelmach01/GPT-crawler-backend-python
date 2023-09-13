@@ -7,19 +7,19 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from .models import Task as TaskModel
-from .models import User as UserModel  # Import models from models.py
+from .models import User as UserModel
 
 
 def handle_db_errors(func):
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    async def wrapper(*args, **kwargs):
         session = None
         for arg in args:
             if isinstance(arg, Session):
                 session = arg
                 break
         try:
-            return func(*args, **kwargs)
+            return await func(*args, **kwargs)
         except sqlalchemy.exc.IntegrityError as e:
             if session:
                 session.rollback()
@@ -31,38 +31,70 @@ def handle_db_errors(func):
 
 # User
 @handle_db_errors
-def create_user(name: str, session: Session) -> UserModel:
-    logging.info(f"Creating user with name: {name}")
-    new_user = UserModel(name=name)
+async def create_user(
+    username: str, hashed_password: str, session: Session
+) -> UserModel | None:
+    logging.info(f"Creating user with username: {username}")
+    # check if user already exists
+    user = await get_user_by_username(username, session)
+
+    if user:
+        logging.info(f"User with username: {username} already exists")
+        return None
+
+    new_user = UserModel(username=username, hashed_password=hashed_password)
     session.add(new_user)
     session.commit()
+
+    logging.info(f"User with username: {username} created successfully")
+
     return new_user
 
 
 @handle_db_errors
-def read_users(session: Session) -> list[UserModel]:
-    return session.query(UserModel).all()
+async def get_user_by_username(username: str, session: Session) -> UserModel | None:
+    return session.query(UserModel).filter_by(username=username).first()
 
 
 @handle_db_errors
-def read_user_by_id(user_id: int, session: Session) -> UserModel | None:
-    return session.query(UserModel).filter_by(id=user_id).first()
-
-
-@handle_db_errors
-def update_user(user_id: int, new_name: str, session: Session) -> UserModel | None:
-    user = read_user_by_id(user_id, session)
+async def update_user_password(
+    user_id: int, new_hashed_password: str, session: Session
+) -> UserModel | None:
+    user = await read_user_by_id(user_id, session)
     if not user:
         return None
-    user.name = new_name
+    user.hashed_password = new_hashed_password
     session.add(user)
     session.commit()
     return user
 
 
 @handle_db_errors
-def delete_user(user_id: int, session: Session) -> UserModel | None:
-    user = read_user_by_id(user_id, session)
+async def read_users(session: Session) -> list[UserModel]:
+    return session.query(UserModel).all()
+
+
+@handle_db_errors
+async def read_user_by_id(user_id: int, session: Session) -> UserModel | None:
+    return session.query(UserModel).filter_by(id=user_id).first()
+
+
+@handle_db_errors
+async def update_user(
+    user_id: int, new_username: str, session: Session
+) -> UserModel | None:
+    user = await read_user_by_id(user_id, session)
+    if not user:
+        return None
+    user.username = new_username
+    session.add(user)
+    session.commit()
+    return user
+
+
+@handle_db_errors
+async def delete_user(user_id: int, session: Session) -> UserModel | None:
+    user = await read_user_by_id(user_id, session)
     if not user:
         return None
     session.delete(user)
@@ -72,7 +104,7 @@ def delete_user(user_id: int, session: Session) -> UserModel | None:
 
 # Task
 @handle_db_errors
-def create_task(
+async def create_task(
     description: str, date: datetime, user_id: int, session: Session
 ) -> TaskModel | None:
     try:
@@ -88,26 +120,28 @@ def create_task(
 
 
 @handle_db_errors
-def read_tasks(session: Session) -> list[TaskModel]:
+async def read_tasks(session: Session) -> list[TaskModel]:
     return session.query(TaskModel).all()
 
 
 @handle_db_errors
-def read_task_by_id(task_id: int, session: Session) -> TaskModel | None:
+async def read_task_by_id(task_id: int, session: Session) -> TaskModel | None:
     return session.query(TaskModel).filter_by(id=task_id).first()
 
 
 @handle_db_errors
-def read_tasks_by_user_id(user_id: int, session: Session) -> list[TaskModel] | None:
+async def read_tasks_by_user_id(
+    user_id: int, session: Session
+) -> list[TaskModel] | None:
     logging.info(f"Reading tasks for user with id: {user_id}")
-    user = read_user_by_id(user_id, session)
+    user = await read_user_by_id(user_id, session)
     if not user:
         return None
     return session.query(TaskModel).filter_by(user_id=user_id).all()
 
 
 @handle_db_errors
-def update_task(
+async def update_task(
     task_id: int,
     session: Session,
     new_description: str | None = None,
@@ -117,7 +151,7 @@ def update_task(
     if not new_description and not new_date:
         raise ValueError("No new data provided to update task")
 
-    task = read_task_by_id(task_id, session)
+    task = await read_task_by_id(task_id, session)
     if not task:
         return None
 
@@ -133,8 +167,8 @@ def update_task(
 
 
 @handle_db_errors
-def delete_task(task_id: int, session: Session) -> TaskModel | None:
-    task = read_task_by_id(task_id, session)
+async def delete_task(task_id: int, session: Session) -> TaskModel | None:
+    task = await read_task_by_id(task_id, session)
     if not task:
         return None
     session.delete(task)

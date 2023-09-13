@@ -2,6 +2,7 @@ fastapi
 uvicorn[standard]
 httpx
 aio-pika
+alembic
 
 langchain==0.0.286
 openai
@@ -16,6 +17,11 @@ boto3-stubs[secretsmanager,s3,dynamodb]
 pymysql
 psycopg2-binary
 types-PyMySQL
+
+python-multipart
+passlib[bcrypt]
+python-jose[cryptography]
+
 
 pytest
 pytest-asyncio

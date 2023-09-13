@@ -1,7 +1,6 @@
-import os
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
@@ -28,12 +27,6 @@ def get_app() -> FastAPI:
         openapi_url="/api/openapi.json",
         default_response_class=UJSONResponse,
     )
-
-    @app.middleware("http")
-    async def add_process_id_header(request: Request, call_next):
-        response = await call_next(request)
-        response.headers["X-Worker-Id"] = str(os.getpid())
-        return response
 
     app.add_middleware(
         CORSMiddleware,

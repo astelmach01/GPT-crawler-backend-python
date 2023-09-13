@@ -14,6 +14,7 @@ from app.services.aws.rds_crud import (
     read_tasks_by_user_id,
     update_task,
 )
+from app.web.api.auth.core import get_current_user
 
 from ..dependencies import get_db
 
@@ -55,15 +56,18 @@ async def create_new_task(
     date: datetime,
     user_id: int,
     session=Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
-    task = create_task(description, date, user_id, session)
+    task = await create_task(description, date, user_id, session)
     return [task], f"Task for user_id: {user_id} not created"
 
 
 @router.get("/get_user_tasks/{user_id}", response_model=TaskResponse)
 @task_response_decorator
-async def get_user_tasks(user_id: int, session=Depends(get_db)):
-    tasks = read_tasks_by_user_id(user_id, session)
+async def get_user_tasks(
+    user_id: int, session=Depends(get_db), current_user=Depends(get_current_user)
+):
+    tasks = await read_tasks_by_user_id(user_id, session)
     return tasks, f"No tasks found for user: {user_id}"
 
 
@@ -74,8 +78,9 @@ async def _update_task(
     description: str,
     date: datetime | None = None,
     session=Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
-    task: TaskModel | None = update_task(
+    task: TaskModel | None = await update_task(
         task_id, new_description=description, new_date=date, session=session
     )
     return [task], f"Task with task_id: {task_id} not updated"
@@ -83,6 +88,8 @@ async def _update_task(
 
 @router.delete("/delete_task/{task_id}", response_model=TaskResponse)
 @task_response_decorator
-async def _delete_task(task_id: int, session=Depends(get_db)):
-    task: TaskModel | None = delete_task(task_id, session)
+async def _delete_task(
+    task_id: int, session=Depends(get_db), current_user=Depends(get_current_user)
+):
+    task: TaskModel | None = await delete_task(task_id, session)
     return [task], f"Task with task_id: {task_id} not deleted"

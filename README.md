@@ -1,6 +1,7 @@
 # Cosmo Backend
 
-Frontend is [here](https://github.com/astelmach01/Cosmo-frontend)
+Frontend repo is [here](https://github.com/astelmach01/Cosmo-frontend)
+Website demo is [here](https://cosmo-frontend-j8mf.vercel.app/)
 
 ## Installation
 

@@ -1,6 +1,6 @@
 # Cosmo Backend
 
-This project was generated using fastapi_template.
+Frontend is [here](https://github.com/astelmach01/Cosmo-frontend)
 
 ## Installation
 

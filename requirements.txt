@@ -7,9 +7,7 @@
 aio-pika==9.2.2
     # via -r requirements.in
 aiohttp==3.8.5
-    # via
-    #   langchain
-    #   openai
+    # via langchain
 aiormq==6.7.7
     # via aio-pika
 aiosignal==1.3.1
@@ -21,16 +19,25 @@ annotated-types==0.5.0
 anyio==3.7.1
     # via
     #   httpcore
+    #   openai
     #   starlette
     #   watchfiles
 async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
-    # via aiohttp
+    # via
+    #   aiohttp
+    #   automat
+    #   service-identity
+    #   twisted
 autoflake==2.2.1
     # via -r requirements.in
+automat==22.10.0
+    # via twisted
 bcrypt==4.0.1
     # via passlib
+beautifulsoup4==4.12.2
+    # via bs4
 black==23.7.0
     # via -r requirements.in
 boto3==1.28.30
@@ -43,6 +50,8 @@ botocore==1.31.30
     #   s3transfer
 botocore-stubs==1.31.31
     # via boto3-stubs
+bs4==0.0.1
+    # via -r requirements.in
 certifi==2023.7.22
     # via
     #   httpcore
@@ -58,14 +67,28 @@ click==8.1.7
     # via
     #   black
     #   uvicorn
+constantly==23.10.4
+    # via twisted
 cryptography==41.0.3
-    # via python-jose
+    # via
+    #   pyopenssl
+    #   python-jose
+    #   scrapy
+    #   service-identity
+cssselect==1.2.0
+    # via
+    #   parsel
+    #   scrapy
 dataclasses-json==0.5.14
     # via langchain
+distro==1.9.0
+    # via openai
 ecdsa==0.18.0
     # via python-jose
 fastapi==0.101.1
     # via -r requirements.in
+filelock==3.13.1
+    # via tldextract
 flake8==6.1.0
     # via -r requirements.in
 frozenlist==1.4.0
@@ -81,27 +104,47 @@ httpcore==0.17.3
 httptools==0.6.0
     # via uvicorn
 httpx==0.24.1
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   openai
+hyperlink==21.0.0
+    # via twisted
 idna==3.4
     # via
     #   anyio
     #   httpx
+    #   hyperlink
     #   requests
+    #   tldextract
     #   yarl
+incremental==22.10.0
+    # via twisted
 iniconfig==2.0.0
     # via pytest
 isort==5.12.0
     # via -r requirements.in
+itemadapter==0.8.0
+    # via
+    #   itemloaders
+    #   scrapy
+itemloaders==1.1.0
+    # via scrapy
 jmespath==1.0.1
     # via
     #   boto3
     #   botocore
+    #   itemloaders
+    #   parsel
 langchain==0.0.286
     # via -r requirements.in
 langsmith==0.0.25
     # via langchain
 loguru==0.7.0
     # via -r requirements.in
+lxml==4.9.4
+    # via
+    #   parsel
+    #   scrapy
 mako==1.2.4
     # via alembic
 markupsafe==2.1.3
@@ -133,15 +176,21 @@ numpy==1.25.2
     # via
     #   langchain
     #   numexpr
-openai==0.27.8
+openai==1.6.1
     # via -r requirements.in
 packaging==23.1
     # via
     #   black
     #   marshmallow
+    #   parsel
     #   pytest
+    #   scrapy
 pamqp==3.2.1
     # via aiormq
+parsel==1.8.1
+    # via
+    #   itemloaders
+    #   scrapy
 passlib[bcrypt]==1.7.4
     # via -r requirements.in
 pathspec==0.11.2
@@ -150,12 +199,18 @@ platformdirs==3.10.0
     # via black
 pluggy==1.2.0
     # via pytest
+protego==0.3.0
+    # via scrapy
 psycopg2-binary==2.9.7
     # via -r requirements.in
 pyasn1==0.5.0
     # via
+    #   pyasn1-modules
     #   python-jose
     #   rsa
+    #   service-identity
+pyasn1-modules==0.3.0
+    # via service-identity
 pycodestyle==2.11.0
     # via flake8
 pycparser==2.21
@@ -166,17 +221,22 @@ pydantic==2.3.0
     #   fastapi
     #   langchain
     #   langsmith
+    #   openai
     #   pydantic-settings
 pydantic-core==2.6.3
     # via pydantic
 pydantic-settings==2.0.3
     # via -r requirements.in
+pydispatcher==2.0.7
+    # via scrapy
 pyflakes==3.1.0
     # via
     #   autoflake
     #   flake8
 pymysql==1.1.0
     # via -r requirements.in
+pyopenssl==23.2.0
+    # via scrapy
 pytest==7.4.0
     # via
     #   -r requirements.in
@@ -202,24 +262,38 @@ pyyaml==6.0.1
     # via
     #   langchain
     #   uvicorn
+queuelib==1.6.2
+    # via scrapy
 requests==2.31.0
     # via
     #   langchain
     #   langsmith
-    #   openai
+    #   requests-file
+    #   tldextract
+requests-file==1.5.1
+    # via tldextract
 rsa==4.9
     # via python-jose
 s3transfer==0.6.2
     # via boto3
+scrapy==2.11.0
+    # via -r requirements.in
+service-identity==23.1.0
+    # via scrapy
 six==1.16.0
     # via
+    #   automat
     #   ecdsa
     #   python-dateutil
+    #   requests-file
 sniffio==1.3.0
     # via
     #   anyio
     #   httpcore
     #   httpx
+    #   openai
+soupsieve==2.5
+    # via beautifulsoup4
 sqlalchemy==2.0.20
     # via
     #   alembic
@@ -228,8 +302,12 @@ starlette==0.27.0
     # via fastapi
 tenacity==8.2.3
     # via langchain
+tldextract==5.1.1
+    # via scrapy
 tqdm==4.66.1
     # via openai
+twisted==22.10.0
+    # via scrapy
 types-awscrt==0.19.0
     # via botocore-stubs
 types-pymysql==1.1.0.1
@@ -241,9 +319,11 @@ typing-extensions==4.7.1
     #   alembic
     #   fastapi
     #   mypy
+    #   openai
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
+    #   twisted
     #   typing-inspect
 typing-inspect==0.9.0
     # via dataclasses-json
@@ -257,6 +337,11 @@ uvicorn[standard]==0.23.2
     # via -r requirements.in
 uvloop==0.17.0
     # via uvicorn
+w3lib==2.1.2
+    # via
+    #   itemloaders
+    #   parsel
+    #   scrapy
 watchfiles==0.19.0
     # via uvicorn
 websockets==11.0.3
@@ -266,3 +351,10 @@ yarl==1.9.2
     #   aio-pika
     #   aiohttp
     #   aiormq
+zope-interface==6.1
+    # via
+    #   scrapy
+    #   twisted
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

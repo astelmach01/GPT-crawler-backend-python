@@ -3,9 +3,11 @@ uvicorn[standard]
 httpx
 aio-pika
 alembic
+scrapy
+bs4
 
 langchain==0.0.286
-openai
+openai>=1.0.0
 
 pydantic
 pydantic-settings

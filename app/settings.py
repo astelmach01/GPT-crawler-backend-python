@@ -3,7 +3,6 @@ from pathlib import Path
 from tempfile import gettempdir
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from yarl import URL
 
 TEMP_DIR = Path(gettempdir())
 
@@ -27,11 +26,6 @@ class Settings(BaseSettings):
     with environment variables.
     """
 
-
-    # Frontend URL
-    frontend_url: str
-    allowed_origins_regex: str = r"https://.*\.vercel\.app"
-
     host: str = "127.0.0.1"
     port: int = 8000
     # quantity of workers for uvicorn
@@ -41,7 +35,6 @@ class Settings(BaseSettings):
 
     # Current environment
     ENVIRONMENT: str = "development"
-
 
     log_level: LogLevel = LogLevel.INFO
 

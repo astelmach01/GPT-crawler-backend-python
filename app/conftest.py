@@ -1,16 +1,9 @@
-from datetime import datetime
 from typing import AsyncGenerator
 
 import pytest
 from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-from app.services.aws.models import Base, Task, User
-from app.settings import settings
-
-from .web.api.dependencies import get_db
 from .web.application import get_app
 
 
@@ -25,14 +18,13 @@ def anyio_backend() -> str:
 
 
 @pytest.fixture
-def fastapi_app(test_db_session) -> FastAPI:
+def fastapi_app() -> FastAPI:
     """
     Fixture for creating FastAPI app.
 
     :return: fastapi app with mocked dependencies.
     """
     application = get_app()
-    application.dependency_overrides[get_db] = lambda: test_db_session
     return application  # noqa: WPS331
 
 
@@ -48,37 +40,3 @@ async def client(
     """
     async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
         yield ac
-
-
-test_task_params = {
-    "description": "test task",
-    "date": datetime(2021, 1, 1, 12, 0),
-    "user_id": 1,
-}
-
-test_user_params = {"username": "test user", "hashed_password": "pass", "id": 1}
-
-
-@pytest.fixture(scope="function")
-def test_db_session():
-    engine = create_engine(settings.get_db_url("test_user_task_db"))
-
-    Base.metadata.create_all(engine)
-    session_local = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    db = session_local()
-
-    # Insert a test user
-    test_user = User(**test_user_params)
-    db.add(test_user)
-    db.commit()
-
-    # insert a test task with a date of 12:30 on 1st Jan 2021
-    test_task = Task(**test_task_params)
-    db.add(test_task)
-    db.commit()
-
-    yield db  # this is where the testing happens
-
-    db.close()
-
-    Base.metadata.drop_all(engine)

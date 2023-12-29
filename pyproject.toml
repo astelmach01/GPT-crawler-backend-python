@@ -1,20 +1,19 @@
-[tool.black]
+[tool.ruff]
 line-length = 88
-target-version = ['py311']
+# Ensure 'I' is included in the select list to enable isort rules
+select = ["F", "E", "W", "I"]
 
-[tool.black.excludes]
-paths = [
-    ".venv",
-    ".git",
-    "build",
-    "alembic",
-]
+[tool.ruff.isort]
+lines-after-imports = 2
+force-single-line = true
 
-[build-system]
-requires = ["black"]
-build-backend = "setuptools.build_meta"
+[tool.pytest.ini_options]
+addopts = "-W ignore::DeprecationWarning"
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-include_trailing_comma = true
+[tool.mypy]
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+exclude = [".git", "__pycache__", "docs/source/conf.py", "old", "build", "dist", "app/tests", "alembic"]
+
+[mypy.app.tests]
+ignore_errors = true

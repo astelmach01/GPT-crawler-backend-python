@@ -2,7 +2,9 @@ import enum
 from pathlib import Path
 from tempfile import gettempdir
 
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict
+
 
 TEMP_DIR = Path(gettempdir())
 
@@ -28,13 +30,12 @@ class Settings(BaseSettings):
 
     host: str = "127.0.0.1"
     port: int = 8000
+
     # quantity of workers for uvicorn
     workers_count: int = 1
+
     # Enable uvicorn reloading
     reload: bool = True
-
-    # Current environment
-    ENVIRONMENT: str = "development"
 
     log_level: LogLevel = LogLevel.INFO
 

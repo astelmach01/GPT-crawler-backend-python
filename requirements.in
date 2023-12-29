@@ -2,35 +2,19 @@ fastapi
 uvicorn[standard]
 httpx
 aio-pika
-alembic
 scrapy
 bs4
 
-langchain==0.0.286
 openai>=1.0.0
 
 pydantic
 pydantic-settings
+pre-commit
 python-dotenv
 ujson
-
-boto3
-boto3-stubs[secretsmanager,s3,dynamodb]
-pymysql
-psycopg2-binary
-types-PyMySQL
-
-python-multipart
-passlib[bcrypt]
-python-jose[cryptography]
-
 
 pytest
 pytest-asyncio
 pytest-dotenv
-autoflake
-flake8
-black
-isort
 mypy
 loguru

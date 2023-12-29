@@ -12,6 +12,7 @@ from scrapy.utils.project import get_project_settings
 
 from app import OUTPUT_DIR
 
+
 settings = get_project_settings()
 settings.set("LOG_ENABLED", False)
 
@@ -47,7 +48,7 @@ class MySpider(scrapy.Spider):
             with page_path.open("w", encoding="utf-8") as file:
                 soup = BeautifulSoup(response.text, "html.parser")
                 text = soup.get_text()
-                cleaned_text = re.sub("\s+", " ", text).strip()
+                cleaned_text = re.sub(r"\s+", " ", text).strip()
                 file.write(cleaned_text)
         except IOError as e:
             self.log(f"Failed to write file {page_path}: {e}")

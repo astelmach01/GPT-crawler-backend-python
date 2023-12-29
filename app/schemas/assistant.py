@@ -1,22 +1,25 @@
-from typing import List, Union
+from typing import List
+from typing import Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from pydantic import Field
 
 from .response import Response
 
 
 # Define Pydantic models for the various tool types
 class CodeInterpreterTool(BaseModel):
-    type: str = Field("code_interpreter", regex="code_interpreter")
+    type: str = "code_interpreter"
 
 
 class RetrievalTool(BaseModel):
-    type: str = Field("retrieval", regex="retrieval")
+    type: str = "retrieval"
 
 
 class FunctionParameters(BaseModel):
-    # Since parameters are described as a JSON Schema object, we can represent them with a dict
-    # More specific models can be created if there's a known structure to validate against
+    # Since parameters are described as a JSON Schema object, we can represent
+    # them with a dict. More specific models can be created if there's a known
+    # structure to validate against
     pass  # Placeholder for any specific fields, if necessary
 
 
@@ -27,7 +30,6 @@ class FunctionTool(BaseModel):
     parameters: FunctionParameters | None
 
 
-# Union type for tools as they can be of different types
 ToolType = Union[CodeInterpreterTool, RetrievalTool, FunctionTool]
 
 

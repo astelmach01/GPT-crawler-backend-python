@@ -1,5 +1,7 @@
 import os
-from typing import Literal, List, Dict
+from typing import Dict
+from typing import List
+from typing import Literal
 
 from fastapi import HTTPException
 from openai import OpenAI
@@ -13,8 +15,8 @@ class AssistantCreationRequest(BaseModel):
     model: str = "gpt-3.5-turbo-1106"
     name: str | None = None
     description: str | None = None
-    file_ids: List[str] | None = None  # List of strings
-    tools: List[Dict[str, str]] | None = None  # List of dictionaries
+    file_ids: List[str] | None = None
+    tools: List[Dict[str, str]] | None = None
     instructions: str | None = None
 
 

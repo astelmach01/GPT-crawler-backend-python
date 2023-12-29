@@ -17,4 +17,5 @@ pytest
 pytest-asyncio
 pytest-dotenv
 mypy
+ruff
 loguru

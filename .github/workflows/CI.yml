@@ -27,7 +27,7 @@ jobs:
 
       - name: Lint with Ruff
         run: |
-          ruff -- --check .
+          ruff check .
       - name: Validate types with MyPy
         run: |
           mypy .

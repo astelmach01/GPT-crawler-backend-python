@@ -13,6 +13,7 @@ jobs:
         with:
           python-version: 3.11.7
           cache: 'pip'
+
       - name: Cache pip packages
         uses: actions/cache@v3
         with:
@@ -20,6 +21,7 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: |
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
@@ -28,9 +30,11 @@ jobs:
       - name: Lint with Ruff
         run: |
           ruff check .
+
       - name: Validate types with MyPy
         run: |
           mypy .
+
       - name: Test with pytest
         run: |
           pytest

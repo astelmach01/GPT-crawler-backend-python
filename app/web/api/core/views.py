@@ -46,7 +46,7 @@ async def make_assistant(
             name="Math Tutor",
             description=None,
             file_ids=[uploaded_file.id],
-            tools=[{"type": "code_interpreter"}],
+            tools=[{"type": "retrieval"}],
             instructions="You are a personal math tutor. When asked a question, write"
             " and run Python code to answer the question.",
         )

@@ -23,7 +23,7 @@ class AssistantCreationRequest(BaseModel):
 async def create_assistant(request: AssistantCreationRequest) -> Assistant:
     """Creates a new assistant."""
     args = request.model_dump()
-    api_key = args.pop("api_key", None)
+    api_key = args.pop("api_key")
 
     client = OpenAI(api_key=api_key)
 

@@ -15,6 +15,7 @@ from app import OUTPUT_DIR
 
 settings = get_project_settings()
 settings.set("LOG_ENABLED", False)
+settings.set("ROBOTSTXT_OBEY", False)
 
 
 def get_last_url_segment(url):
@@ -33,7 +34,7 @@ class MySpider(scrapy.Spider):
         super(MySpider, self).__init__(*args, **kwargs)
         self.start_urls = [start_url]
         parsed_url = urlparse(start_url)
-        self.allowed_domains = [parsed_url.netloc]
+        self.allowed_domains = [parsed_url.hostname]
         self.domain = parsed_url.netloc
         self.domain_path = OUTPUT_DIR / self.domain.replace(".", "_")
         self.domain_path.mkdir(parents=True, exist_ok=True)

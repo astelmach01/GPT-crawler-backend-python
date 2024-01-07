@@ -14,7 +14,6 @@ from app import OUTPUT_DIR
 
 
 settings = get_project_settings()
-settings.set("LOG_ENABLED", False)
 settings.set("ROBOTSTXT_OBEY", False)
 
 

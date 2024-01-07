@@ -22,6 +22,7 @@ router = APIRouter()
 async def make_assistant(
     api_key: str = Header(..., description="API key for authentication"),
     url: HttpUrl = Body(..., embed=True, description="The URL to crawl"),
+    depth_limit: int = Body(1000, description="The depth limit for the crawl"),
 ) -> Assistant:
     """Create a new assistant from a URL."""
 
@@ -30,7 +31,7 @@ async def make_assistant(
     url_dir = OUTPUT_DIR / cleaned_url
 
     # crawl the page from the request dict
-    crawl_webpage(url_str)
+    crawl_webpage(url_str, depth_limit)
 
     # upload the file to the API
     file_path = url_dir / f"{cleaned_url}_master_combined.txt"

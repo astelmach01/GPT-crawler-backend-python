@@ -30,7 +30,7 @@ async def make_assistant(
 
     url_str = str(url)
     cleaned_url = urlparse(url_str).netloc.replace(".", "_")
-    url_dir = OUTPUT_DIR / cleaned_url
+    url_dir = (OUTPUT_DIR / cleaned_url).resolve()
 
     # crawl the page from the request dict
     await crawl_webpage(url_str, depth_limit)

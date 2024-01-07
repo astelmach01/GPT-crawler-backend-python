@@ -1,8 +1,6 @@
 # Cosmo Backend
 
-Frontend repo is [here](https://github.com/astelmach01/Cosmo-frontend)
-
-Website demo is [here](https://cosmo-frontend-j8mf.vercel.app/)
+Frontend repo is [here](https://github.com/astelmach01/GPT-crawler-frontend)
 
 ## Installation
 
@@ -15,6 +13,7 @@ pip install -r requirements.txt
 ```
 
 ## Running the app
+
 ```shell
 uvicorn app.web.application:get_app --reload --factory
 ```
@@ -22,24 +21,6 @@ uvicorn app.web.application:get_app --reload --factory
 This will start the server on the configured host.
 
 You can find swagger documentation at `/api/docs`.
-
-## Project structure
-
-```bash
-$ tree "backend"
-app
-├── conftest.py  # Fixtures for all tests.
-├── __main__.py  # Startup script. Starts uvicorn.
-├── services  # Package for different external services such as rabbit or redis etc.
-├── settings.py  # Main configuration settings for project.
-├── static  # Static content.
-├── tests  # Tests for project.
-└── web  # Package contains web server. Handlers, startup config.
-    ├── api  # Package with all handlers.
-    │   └── router.py  # Main router.
-    ├── application.py  # FastAPI application configuration.
-    └── lifetime.py  # Contains actions to perform on startup and shutdown.
-```
 
 ## Configuration
 
@@ -49,6 +30,7 @@ You can create `.env` file in the root directory and place all
 environment variables here.
 
 An example of .env file:
+
 ```bash
 BACKEND_RELOAD="True"
 BACKEND_PORT="8000"
@@ -60,6 +42,7 @@ You can read more about BaseSettings class here: https://pydantic-docs.helpmanua
 ## Pre-commit
 
 To install pre-commit simply run inside the shell:
+
 ```bash
 pre-commit install
 ```
@@ -67,8 +50,6 @@ pre-commit install
 pre-commit is very useful to check your code before publishing it.
 It's configured using .pre-commit-config.yaml file.
 
-By default it runs:
-* black (formats your code);
-* isort (sorts imports in all files);
+By default it runs ruff for code formatting and mypy for type checking.
 
 You can read more about pre-commit here: https://pre-commit.com/

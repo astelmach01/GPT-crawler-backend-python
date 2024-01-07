@@ -44,7 +44,7 @@ class AssistantAPIPostParams(BaseModel):
 # request body to create an assistant
 class AssistantCreationRequest(BaseModel):
     api_key: str
-    model: str = "gpt-3.5-turbo-1106"
+    model: str
     name: str | None = None
     description: str | None = None
     file_ids: List[str] | None = None

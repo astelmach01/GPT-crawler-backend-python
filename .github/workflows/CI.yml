@@ -1,4 +1,4 @@
-name: Cosmo Backend
+name: GPT-Crawler Backend
 
 on: pull_request
 

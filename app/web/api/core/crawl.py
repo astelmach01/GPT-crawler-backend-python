@@ -108,7 +108,7 @@ def run_spider(start_url: HttpUrl, depth_limit: int, *args, **kwargs):
     process.start()
 
 
-def crawl_webpage(start_url: str, depth_limit: int = 1000, *args, **kwargs):
+async def crawl_webpage(start_url: str, depth_limit: int = 1000, *args, **kwargs):
     # Run Scrapy in a separate process
     crawler_process = multiprocessing.Process(
         target=run_spider, args=(start_url, depth_limit, *args), kwargs=kwargs
@@ -134,5 +134,11 @@ def create_master_file(start_url: str):
     logging.info(f"Finished creating master file {master_file_path}")
 
 
+async def main():
+    await crawl_webpage("https://astelmach01.github.io/tinylang")
+
+
 if __name__ == "__main__":
-    crawl_webpage("https://astelmach01.github.io/tinylang")
+    import asyncio
+
+    asyncio.run(main())

@@ -1,23 +1,12 @@
 import os
-from typing import Dict
-from typing import List
 from typing import Literal
 
 from fastapi import HTTPException
 from openai import OpenAI
 from openai.types import FileObject
 from openai.types.beta import Assistant
-from pydantic import BaseModel
 
-
-class AssistantCreationRequest(BaseModel):
-    api_key: str
-    model: str = "gpt-3.5-turbo-1106"
-    name: str | None = None
-    description: str | None = None
-    file_ids: List[str] | None = None
-    tools: List[Dict[str, str]] | None = None
-    instructions: str | None = None
+from app.schemas.assistant import AssistantCreationRequest
 
 
 async def create_assistant(request: AssistantCreationRequest) -> Assistant:

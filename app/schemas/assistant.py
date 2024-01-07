@@ -1,10 +1,10 @@
+from typing import Dict
 from typing import List
 from typing import Union
 
 from pydantic import BaseModel
 from pydantic import Field
-
-from .response import Response
+from pydantic import HttpUrl
 
 
 # Define Pydantic models for the various tool types
@@ -24,21 +24,29 @@ class FunctionParameters(BaseModel):
 
 
 class FunctionTool(BaseModel):
-    type: str = Field("function", regex="function")
+    type: str = "function"
     description: str
-    name: str = Field(..., regex=r"^[a-zA-Z0-9_-]{1,64}$")
+    name: str = Field(..., pattern=r"^[a-zA-Z0-9_-]{1,64}$")
     parameters: FunctionParameters | None
 
 
 ToolType = Union[CodeInterpreterTool, RetrievalTool, FunctionTool]
 
 
-class AssistantResponse(Response):
-    id: str
-    object: str
-    created_at: int
-    name: str | None = Field(None, max_length=256)
-    description: str | None = Field(None, max_length=512)
-    model: str
-    instructions: str | None = Field(None, max_length=32768)
-    tools: List[ToolType] = Field(..., max_items=128)
+class AssistantAPIPostParams(BaseModel):
+    url: HttpUrl = Field(..., description="The URL to crawl")
+    depth_limit: int = Field(1000, gt=0, description="The depth limit for the crawl")
+    model: str = Field(
+        "gpt-3.5-turbo-1106", description="The GPT model to use for the assistant"
+    )
+
+
+# request body to create an assistant
+class AssistantCreationRequest(BaseModel):
+    api_key: str
+    model: str = "gpt-3.5-turbo-1106"
+    name: str | None = None
+    description: str | None = None
+    file_ids: List[str] | None = None
+    tools: List[Dict[str, str]] | None = None
+    instructions: str | None = None

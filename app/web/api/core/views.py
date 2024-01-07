@@ -5,14 +5,14 @@ from fastapi import APIRouter
 from fastapi import Body
 from fastapi import Header
 from openai.types.beta.assistant import Assistant
-from pydantic import HttpUrl
 
 from app import OUTPUT_DIR
+from app.schemas.assistant import AssistantAPIPostParams
+from app.schemas.assistant import AssistantCreationRequest
 
-from .assistant import AssistantCreationRequest
-from .assistant import create_assistant
-from .assistant import upload_file
 from .crawl import crawl_webpage
+from .openai import create_assistant
+from .openai import upload_file
 
 
 router = APIRouter()
@@ -20,18 +20,20 @@ router = APIRouter()
 
 @router.post("/assistant")
 async def make_assistant(
-    api_key: str = Header(..., description="API key for authentication"),
-    url: HttpUrl = Body(..., embed=True, description="The URL to crawl"),
-    depth_limit: int = Body(1000, description="The depth limit for the crawl"),
+    api_key: str = Header(..., description="OpenAI API key for authentication"),
+    params: AssistantAPIPostParams = Body(...),
 ) -> Assistant:
     """Create a new assistant from a URL."""
+    url = params.url
+    depth_limit = params.depth_limit
+    model = params.model
 
     url_str = str(url)
     cleaned_url = urlparse(url_str).netloc.replace(".", "_")
     url_dir = OUTPUT_DIR / cleaned_url
 
     # crawl the page from the request dict
-    crawl_webpage(url_str, depth_limit)
+    await crawl_webpage(url_str, depth_limit)
 
     # upload the file to the API
     file_path = url_dir / f"{cleaned_url}_master_combined.txt"
@@ -43,13 +45,11 @@ async def make_assistant(
     assistant = await create_assistant(
         AssistantCreationRequest(
             api_key=api_key,
-            model="gpt-3.5-turbo-1106",
-            name="Math Tutor",
+            model=model,
+            name=f"{cleaned_url} assistant",
             description=None,
             file_ids=[uploaded_file.id],
             tools=[{"type": "retrieval"}],
-            instructions="You are a personal math tutor. When asked a question, write"
-            " and run Python code to answer the question.",
         )
     )
 

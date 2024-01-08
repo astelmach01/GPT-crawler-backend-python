@@ -28,9 +28,12 @@ certifi==2023.7.22
     # via
     #   httpcore
     #   httpx
+    #   requests
     #   selenium
 cfgv==3.4.0
     # via pre-commit
+charset-normalizer==3.3.2
+    # via requests
 click==8.1.7
     # via uvicorn
 distlib==0.3.8
@@ -60,6 +63,7 @@ idna==3.4
     # via
     #   anyio
     #   httpx
+    #   requests
     #   trio
     #   yarl
 iniconfig==2.0.0
@@ -79,7 +83,9 @@ openai==1.6.1
 outcome==1.3.0.post0
     # via trio
 packaging==23.1
-    # via pytest
+    # via
+    #   pytest
+    #   webdriver-manager
 pamqp==3.2.1
     # via aiormq
 platformdirs==3.10.0
@@ -115,10 +121,13 @@ python-dotenv==1.0.0
     #   pydantic-settings
     #   pytest-dotenv
     #   uvicorn
+    #   webdriver-manager
 pyyaml==6.0.1
     # via
     #   pre-commit
     #   uvicorn
+requests==2.31.0
+    # via webdriver-manager
 ruff==0.1.9
     # via -r requirements.in
 selenium==4.16.0
@@ -155,6 +164,7 @@ ujson==5.8.0
     # via -r requirements.in
 urllib3[socks]==1.26.16
     # via
+    #   requests
     #   selenium
     #   urllib3
 uvicorn[standard]==0.23.2
@@ -165,6 +175,8 @@ virtualenv==20.25.0
     # via pre-commit
 watchfiles==0.19.0
     # via uvicorn
+webdriver-manager==4.0.1
+    # via -r requirements.in
 websockets==11.0.3
     # via uvicorn
 wsproto==1.2.0

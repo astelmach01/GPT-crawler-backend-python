@@ -2,8 +2,7 @@ fastapi
 uvicorn[standard]
 httpx
 aio-pika
-selenium
-webdriver_manager
+playwright
 bs4
 
 openai>=1.0.0

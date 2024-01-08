@@ -1,16 +1,33 @@
+import asyncio
 import hashlib
 import logging
 from pathlib import Path
 from typing import Set
+from urllib.parse import urljoin
 from urllib.parse import urlparse
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
+from playwright.async_api import async_playwright
+
+
+# Setup basic logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+
+def should_follow_link(base_url, href) -> bool:
+    # ignore anchor links
+    if href.startswith("#"):
+        return False
+
+    parsed_base_url = urlparse(base_url)
+    full_url = urljoin(base_url, href)
+    parsed_full_url = urlparse(full_url)
+    return (
+        parsed_full_url.netloc == parsed_base_url.netloc
+        and parsed_full_url.scheme in ["http", "https"]
+    )
+
 
 
 def format_filename(url):
@@ -19,22 +36,27 @@ def format_filename(url):
     return formatted_name.strip("/").replace("/", "_").replace("-", "_")
 
 
-def fetch_page(driver, url, current_depth, max_depth, output_dir, visited):
-    if url in visited or current_depth > max_depth:
+async def fetch_page(browser, url, current_depth, max_depth, domain_dir, visited):
+    if url in visited:
+        logging.info(f"Skipping {url} (already visited)")
         return
+
+    if current_depth > max_depth:
+        logging.info(f"Skipping {url} (max depth reached)")
+        return
+
     visited.add(url)
 
-    driver.get(url)
-    WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.TAG_NAME, "body"))
-    )
+    logging.info(f"Fetching {url} at depth {current_depth}")
+    page = await browser.new_page()
+    await page.goto(url)
+    await page.wait_for_selector("body")
 
-    parsed_url = urlparse(url)
     file_name = format_filename(url) + "_text.txt"
-    file_path = output_dir / file_name
+    file_path = domain_dir / file_name
 
     # Extract text content from the body of the page
-    text_content = driver.find_element(By.TAG_NAME, "body").get_attribute("innerText")
+    text_content = await page.inner_text("body")
 
     with file_path.open("w", encoding="utf-8") as file:
         file.write(text_content)
@@ -45,26 +67,27 @@ def fetch_page(driver, url, current_depth, max_depth, output_dir, visited):
 
     # Collecting all links before visiting
     if current_depth < max_depth:
-        hrefs = [
-            link.get_attribute("href")
-            for link in driver.find_elements(By.TAG_NAME, "a")
-        ]
+        href_elements = await page.query_selector_all("a")
+        hrefs = [await href.get_attribute("href") for href in href_elements]
         for href in hrefs:
-            if href and urlparse(href).netloc == parsed_url.netloc:
-                fetch_page(
-                    driver, href, current_depth + 1, max_depth, output_dir, visited
+            if href and should_follow_link(url, href):
+                # full url
+                full_url = urljoin(url, href)
+                await fetch_page(
+                    browser, full_url, current_depth + 1, max_depth, domain_dir, visited
                 )
 
+    await page.close()
 
-def create_master_file(url, output_dir):
+
+async def create_master_file(url, domain_dir):
     formatted_name = format_filename(url)
-    domain_path = output_dir / formatted_name
-    master_file_path = domain_path / f"{formatted_name}_master.txt"
+    master_file_path = domain_dir / f"{formatted_name}_master.txt"
 
     seen_hashes = set()
 
     with master_file_path.open("w", encoding="utf-8") as master_file:
-        for file_path in domain_path.glob("**/*_text.txt"):
+        for file_path in domain_dir.glob("**/*_text.txt"):
             with file_path.open("r", encoding="utf-8") as f:
                 for line in f:
                     line_hash = hashlib.md5(line.encode("utf-8")).hexdigest()
@@ -77,21 +100,20 @@ def create_master_file(url, output_dir):
 
 
 async def crawl_webpage(url: str, max_depth: int = 100):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
 
-    domain_name = urlparse(url).netloc
-    output_dir = Path("output") / domain_name
-    output_dir.mkdir(parents=True, exist_ok=True)
+        domain_name = urlparse(url).netloc
+        output_dir = Path("output")
+        domain_dir = output_dir / domain_name
+        domain_dir.mkdir(parents=True, exist_ok=True)
 
-    visited: Set = set()
-    fetch_page(driver, url, 1, max_depth, output_dir, visited)
+        visited: Set = set()
+        await fetch_page(browser, url, 1, max_depth, domain_dir, visited)
 
-    driver.quit()
+        await browser.close()
 
-    create_master_file(url, output_dir)
+        await create_master_file(url, domain_dir)
 
 
 async def main():
@@ -101,6 +123,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    import asyncio
-
     asyncio.run(main())

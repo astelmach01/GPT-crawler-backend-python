@@ -1,4 +1,4 @@
-# Cosmo Backend
+# GPT-Crawler Backend
 
 Frontend repo is [here](https://github.com/astelmach01/GPT-crawler-frontend)
 
@@ -10,12 +10,13 @@ To setup the project use this set of commands:
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+playwright install
 ```
 
 ## Running the app
 
 ```shell
-uvicorn app.web.application:get_app --reload --factory
+python -m app
 ```
 
 This will start the server on the configured host.

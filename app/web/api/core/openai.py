@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Literal
 
@@ -31,6 +32,7 @@ async def upload_file(
     """Uploads a file to OpenAI's API."""
     try:
         client = OpenAI(api_key=api_key)
+        logging.info(f"Uploading file {file_path} to OpenAI API")
         response = client.files.create(file=file_path, purpose=purpose)
         return response
     except Exception as e:

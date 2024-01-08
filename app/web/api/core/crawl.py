@@ -1,6 +1,6 @@
 import hashlib
 import logging
-import os
+from pathlib import Path
 from typing import Set
 from urllib.parse import urlparse
 
@@ -31,12 +31,12 @@ def fetch_page(driver, url, current_depth, max_depth, output_dir, visited):
 
     parsed_url = urlparse(url)
     file_name = format_filename(url) + "_text.txt"
-    file_path = os.path.join(output_dir, file_name)
+    file_path = output_dir / file_name
 
     # Extract text content from the body of the page
     text_content = driver.find_element(By.TAG_NAME, "body").get_attribute("innerText")
 
-    with open(file_path, "w", encoding="utf-8") as file:
+    with file_path.open("w", encoding="utf-8") as file:
         file.write(text_content)
 
     logging.info(
@@ -58,23 +58,20 @@ def fetch_page(driver, url, current_depth, max_depth, output_dir, visited):
 
 def create_master_file(url, output_dir):
     formatted_name = format_filename(url)
-    domain_path = os.path.join(output_dir, formatted_name)
-    master_file_path = os.path.join(domain_path, f"{formatted_name}_master.txt")
+    domain_path = output_dir / formatted_name
+    master_file_path = domain_path / f"{formatted_name}_master.txt"
 
     seen_hashes = set()
 
-    with open(master_file_path, "w", encoding="utf-8") as master_file:
-        for root, dirs, files in os.walk(domain_path):
-            for file in files:
-                if file.endswith("_text.txt"):
-                    file_path = os.path.join(root, file)
-                    with open(file_path, "r", encoding="utf-8") as f:
-                        for line in f:
-                            line_hash = hashlib.md5(line.encode("utf-8")).hexdigest()
-                            if line_hash not in seen_hashes:
-                                master_file.write(line)
-                                seen_hashes.add(line_hash)
-                        master_file.write("\n\n")
+    with master_file_path.open("w", encoding="utf-8") as master_file:
+        for file_path in domain_path.glob("**/*_text.txt"):
+            with file_path.open("r", encoding="utf-8") as f:
+                for line in f:
+                    line_hash = hashlib.md5(line.encode("utf-8")).hexdigest()
+                    if line_hash not in seen_hashes:
+                        master_file.write(line)
+                        seen_hashes.add(line_hash)
+                master_file.write("\n\n")
 
     logging.info(f"Master file created at {master_file_path}")
 
@@ -86,15 +83,15 @@ async def crawl_webpage(url: str, max_depth: int = 100):
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     domain_name = urlparse(url).netloc
-    output_dir = os.path.join("output", domain_name)
-    os.makedirs(output_dir, exist_ok=True)
+    output_dir = Path("output") / domain_name
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     visited: Set = set()
     fetch_page(driver, url, 1, max_depth, output_dir, visited)
 
     driver.quit()
 
-    create_master_file(url, "output")
+    create_master_file(url, output_dir)
 
 
 async def main():

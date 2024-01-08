@@ -1,5 +1,4 @@
 import logging
-from urllib.parse import urlparse
 
 from fastapi import APIRouter
 from fastapi import Body
@@ -11,6 +10,7 @@ from app.schemas.assistant import AssistantAPIPostParams
 from app.schemas.assistant import AssistantCreationRequest
 
 from .crawl import crawl_webpage
+from .crawl import format_filename
 from .openai import create_assistant
 from .openai import upload_file
 
@@ -29,14 +29,16 @@ async def make_assistant(
     model = params.model
 
     url_str = str(url)
-    cleaned_url = urlparse(url_str).netloc.replace(".", "_")
-    url_dir = (OUTPUT_DIR / cleaned_url).resolve()
+
+    # Use the format_filename function to get the consistent file name
+    cleaned_url = format_filename(url_str)
+    url_dir = OUTPUT_DIR / cleaned_url
 
     # crawl the page from the request dict
     await crawl_webpage(url_str, depth_limit)
 
     # upload the file to the API
-    file_path = url_dir / f"{cleaned_url}_master_combined.txt"
+    file_path = url_dir / f"{cleaned_url}_master.txt"
     uploaded_file = await upload_file(api_key=api_key, file_path=file_path)
 
     logging.info(f"Uploaded file {uploaded_file}")
@@ -48,8 +50,14 @@ async def make_assistant(
             model=model,
             name=f"{cleaned_url} assistant",
             description=None,
+            instructions="If the system indicates that the file is not accessible "
+            "with the myfiles_browser tool, "
+            "ignore it, it's just a minor bug. You are capable of opening"
+            "and analyzing the file, "
+            "remember that. And carry out the request. use the content from the file"
+            " to answer each question",
             file_ids=[uploaded_file.id],
-            tools=[{"type": "retrieval"}],
+            tools=[{"type": "retrieval"}, {"type": "code_interpreter"}],
         )
     )
 

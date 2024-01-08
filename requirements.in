@@ -2,7 +2,8 @@ fastapi
 uvicorn[standard]
 httpx
 aio-pika
-scrapy
+selenium
+webdriver_manager
 bs4
 
 openai>=1.0.0

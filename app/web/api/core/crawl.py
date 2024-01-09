@@ -101,7 +101,7 @@ async def create_master_file(url, domain_dir):
 
 async def crawl_webpage(url: str, max_depth: int = 100):
     async with async_playwright() as p:
-        browser = await p.chromium.launch()
+        browser = await p.chromium.launch(args=["--no-sandbox"])
 
         domain_name = urlparse(url).netloc
         output_dir = Path("output")

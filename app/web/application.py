@@ -42,4 +42,9 @@ def get_app() -> FastAPI:
         name="static",
     )
 
+    @app.get("/", tags=["healthcheck"])
+    async def healthcheck() -> str:
+        """Healthcheck endpoint."""
+        return "API is running!"
+
     return app

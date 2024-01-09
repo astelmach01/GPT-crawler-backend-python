@@ -9,9 +9,3 @@ api_router = APIRouter()
 api_router.include_router(monitoring_router)
 api_router.include_router(docs_router)
 api_router.include_router(core_router)
-
-
-@api_router.get("/", tags=["healthcheck"])
-async def healthcheck() -> str:
-    """Healthcheck endpoint."""
-    return "API is running!"

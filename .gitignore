@@ -3,6 +3,9 @@
 
 output/
 
+# ignore zip files
+*.zip
+
 # ignore session_name.session
 *.session
 *.session-journal

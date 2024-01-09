@@ -87,15 +87,14 @@ async def fetch_page(browser, url, current_depth, max_depth, domain_dir, visited
         for href in hrefs:
             if should_follow_link(url, href):
                 full_url = urljoin(url, href)
-                if full_url not in visited:
-                    fetch_page(
-                        browser,
-                        full_url,
-                        current_depth + 1,
-                        max_depth,
-                        domain_dir,
-                        visited,
-                    )
+                fetch_page(
+                    browser,
+                    full_url,
+                    current_depth + 1,
+                    max_depth,
+                    domain_dir,
+                    visited,
+                )
 
     await page.close()
 

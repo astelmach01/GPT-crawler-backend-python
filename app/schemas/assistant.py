@@ -35,7 +35,7 @@ ToolType = Union[CodeInterpreterTool, RetrievalTool, FunctionTool]
 
 class AssistantAPIPostParams(BaseModel):
     url: HttpUrl = Field(..., description="The URL to crawl")
-    depth_limit: int = Field(1000, gt=0, description="The depth limit for the crawl")
+    depth_limit: int = Field(2, gt=0, description="The depth limit for the crawl")
     model: str = Field(
         "gpt-3.5-turbo-1106", description="The GPT model to use for the assistant"
     )

@@ -7,7 +7,7 @@ REQUIREMENTS_IN = requirements.in
 # The generated requirements.txt file
 REQUIREMENTS_TXT = requirements.txt
 
-.PHONY: compile install push format type
+.PHONY: compile install push format type build run
 
 format:
 	ruff --fix .
@@ -33,3 +33,9 @@ push: check
 	git add .
 	git commit -m "$(message)"
 	git push
+
+build:
+	@docker build -t gpt-crawler-backend .
+
+run: build
+	@docker run -p 8000:8000 gpt-crawler-backend

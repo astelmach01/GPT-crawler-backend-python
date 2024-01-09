@@ -3,6 +3,7 @@ import logging
 from fastapi import APIRouter
 from fastapi import Body
 from fastapi import Header
+from fastapi import HTTPException
 from openai.types.beta.assistant import Assistant
 
 from app import OUTPUT_DIR
@@ -35,7 +36,10 @@ async def make_assistant(
     url_dir = OUTPUT_DIR / cleaned_url
 
     # crawl the page from the request dict
-    await crawl_webpage(url_str, depth_limit)
+    try:
+        await crawl_webpage(url_str, depth_limit)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     # upload the file to the API
     file_path = url_dir / f"{cleaned_url}_master.txt"

@@ -9,6 +9,13 @@ from urllib.parse import urlparse
 from playwright.async_api import async_playwright
 
 
+TIMEOUT = 60000  # page timeout in milliseconds, so 60 seconds
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+)
+
+
 def should_follow_link(base_url, href) -> bool:
     if not href:
         return False
@@ -44,9 +51,21 @@ async def fetch_page(browser, url, current_depth, max_depth, domain_dir, visited
     visited.add(url)
 
     logging.info(f"Fetching {url} at depth {current_depth}")
-    page = await browser.new_page()
-    await page.goto(url)
+    page = await browser.new_page(user_agent=USER_AGENT)
+    logging.info(f"Page created for {url}")
+
+    try:
+        await page.goto(url, timeout=TIMEOUT)
+    except Exception as e:
+        logging.error(f"Error fetching {url}: {e}")
+        await page.close()
+        return
+
+    logging.info(f"Page loaded for {url}")
+
     await page.wait_for_selector("body")
+
+    logging.info(f"Page body loaded for {url}")
 
     file_name = format_filename(url) + "_text.txt"
     file_path = domain_dir / file_name
@@ -59,7 +78,6 @@ async def fetch_page(browser, url, current_depth, max_depth, domain_dir, visited
 
     logging.info(f"Saving {len(text_content)} characters to {file_path}")
 
-    # Collecting all links before visiting
     if current_depth < max_depth:
         href_elements = await page.query_selector_all("a")
         hrefs = [await href.get_attribute("href") for href in href_elements]
@@ -68,14 +86,16 @@ async def fetch_page(browser, url, current_depth, max_depth, domain_dir, visited
 
         for href in hrefs:
             if should_follow_link(url, href):
-                await fetch_page(
-                    browser,
-                    urljoin(url, href),
-                    current_depth + 1,
-                    max_depth,
-                    domain_dir,
-                    visited,
-                )
+                full_url = urljoin(url, href)
+                if full_url not in visited:
+                    fetch_page(
+                        browser,
+                        full_url,
+                        current_depth + 1,
+                        max_depth,
+                        domain_dir,
+                        visited,
+                    )
 
     await page.close()
 
@@ -99,9 +119,12 @@ async def create_master_file(url, domain_dir):
     logging.info(f"Master file created at {master_file_path}")
 
 
-async def crawl_webpage(url: str, max_depth: int = 100):
+async def crawl_webpage(url: str, max_depth: int = 2):
     async with async_playwright() as p:
-        browser = await p.chromium.launch(args=["--no-sandbox"])
+        options = {"headless": True, "args": ["--no-sandbox"]}
+        logging.info(f"Launching browser with options: {options} and timeout {TIMEOUT}")
+
+        browser = await p.chromium.launch(**options)  # type: ignore
 
         domain_name = urlparse(url).netloc
         output_dir = Path("output")
@@ -112,6 +135,13 @@ async def crawl_webpage(url: str, max_depth: int = 100):
         await fetch_page(browser, url, 1, max_depth, domain_dir, visited)
 
         await browser.close()
+
+        # if we didn't visit any pages, raise an exception
+        if len(visited) == 0 or len(list(domain_dir.glob("**/*.txt"))) == 0:
+            raise Exception(
+                f"Could not crawl any pages at {url}, \
+                            the page likely timed out"
+            )
 
         await create_master_file(url, domain_dir)
 

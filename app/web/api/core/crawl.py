@@ -9,13 +9,10 @@ from urllib.parse import urlparse
 from playwright.async_api import async_playwright
 
 
-# Setup basic logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
-
 def should_follow_link(base_url, href) -> bool:
+    if not href:
+        return False
+
     # ignore anchor links
     if href.startswith("#"):
         return False
@@ -27,7 +24,6 @@ def should_follow_link(base_url, href) -> bool:
         parsed_full_url.netloc == parsed_base_url.netloc
         and parsed_full_url.scheme in ["http", "https"]
     )
-
 
 
 def format_filename(url):
@@ -61,20 +57,24 @@ async def fetch_page(browser, url, current_depth, max_depth, domain_dir, visited
     with file_path.open("w", encoding="utf-8") as file:
         file.write(text_content)
 
-    logging.info(
-        f"Text content saved from {url} at depth {current_depth} to {file_path}"
-    )
+    logging.info(f"Saving {len(text_content)} characters to {file_path}")
 
     # Collecting all links before visiting
     if current_depth < max_depth:
         href_elements = await page.query_selector_all("a")
         hrefs = [await href.get_attribute("href") for href in href_elements]
+
+        logging.info(f"Found {len(hrefs)} links on {url}")
+
         for href in hrefs:
-            if href and should_follow_link(url, href):
-                # full url
-                full_url = urljoin(url, href)
+            if should_follow_link(url, href):
                 await fetch_page(
-                    browser, full_url, current_depth + 1, max_depth, domain_dir, visited
+                    browser,
+                    urljoin(url, href),
+                    current_depth + 1,
+                    max_depth,
+                    domain_dir,
+                    visited,
                 )
 
     await page.close()
@@ -119,6 +119,9 @@ async def crawl_webpage(url: str, max_depth: int = 100):
 async def main():
     URL = "https://nextjs.org"
     MAX_DEPTH = 2  # Adjust as needed
+    logging.basicConfig(
+        level=logging.INFO, format="%(message)s", handlers=[logging.StreamHandler()]
+    )
     await crawl_webpage(URL, MAX_DEPTH)
 
 

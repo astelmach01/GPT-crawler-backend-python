@@ -7,7 +7,9 @@ REQUIREMENTS_IN = requirements.in
 # The generated requirements.txt file
 REQUIREMENTS_TXT = requirements.txt
 
-.PHONY: compile install push format type build run
+EB_ZIP := myapp.zip
+
+.PHONY: compile install push format type build run package
 
 format:
 	ruff --fix .
@@ -39,3 +41,9 @@ build:
 
 run: build
 	@docker run -p 8000:8000 gpt-crawler-backend
+
+
+package:
+	@echo "Creating application zip file for AWS Elastic Beanstalk deployment..."
+	zip -r $(EB_ZIP) . -x *.git* -x *node_modules* -x *.idea* -x *.venv* -x *.devcontainer* -x *.DS_Store* -x *__pycache__* -x *.mypy_cache*
+	@echo "Package $(EB_ZIP) created."
